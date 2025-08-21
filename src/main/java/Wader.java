@@ -12,9 +12,20 @@ public class Wader {
         // Echo user_input
         String user_input = "";
         Scanner inputScanner = new Scanner(System.in);
+        MyList myList = new MyList();
         while (!user_input.equals("bye")) {
             user_input = inputScanner.nextLine();
-            System.out.println(Messages.printCustomMessage("Added: " + user_input));
+            switch (user_input) {
+                case "list":
+                    myList.printList();
+                    break;
+
+                default:
+                    myList.add(user_input);
+                    System.out.println(Messages.printCustomMessage("Added: " + user_input));
+                    break;
+
+            }
         }
         inputScanner.close();
 
