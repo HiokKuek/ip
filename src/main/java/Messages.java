@@ -9,7 +9,7 @@ public class Messages {
     }
 
     public static String getGoodbyeMessage() {
-        return GOODBYE_MESSAGE + HORIZONTAL_LINE;
+        return HORIZONTAL_LINE + GOODBYE_MESSAGE + HORIZONTAL_LINE;
     }
 
     public static String printCustomMessage(String message) {

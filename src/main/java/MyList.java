@@ -13,6 +13,32 @@ public class MyList {
         items.add(newTask);
     }
 
+    private void markIndexAsDone(int index) {
+        items.get(index).markAsDone();
+    }
+
+    private void markIndexAsNotDone(int index) {
+        items.get(index).markAsNotDone();
+    }
+
+    public void markAndPrint(int index, int action) {
+        try {
+            String prntMessage;
+            if (action == 1) {
+                markIndexAsDone(index);
+                prntMessage = "Nice! I've marked this task as done:\n";
+            } else {
+                markIndexAsNotDone(index);
+                prntMessage = "OK, I've marked this task as not done yet:\n";
+            }
+            prntMessage += items.get(index).toString();
+            System.out.println(Messages.printCustomMessage(prntMessage));
+        } catch (IndexOutOfBoundsException e) {
+            String prntMessage = Messages.printCustomMessage("Invalid task index");
+            System.out.println(prntMessage);
+        }
+    }
+
     public void printList() {
         String prnt = items
                 .stream()
