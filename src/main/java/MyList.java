@@ -2,21 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyList {
-    List<String> items;
+    List<Task> items;
 
     public MyList() {
         items = new ArrayList<>();
     }
 
     public void add(String item) {
-        items.add(item);
+        Task newTask = new Task(item);
+        items.add(newTask);
     }
 
     public void printList() {
         String prnt = items
                 .stream()
-                .reduce("", (x, y) -> x == "" ? String.format("%d. %s", items.indexOf(y) + 1, y)
-                        : x + String.format("\n%d. %s", items.indexOf(y) + 1, y));
+                .map(t -> String.format("%d.%s", items.indexOf(t) + 1, t))
+                .reduce((x, y) -> x + "\n" + y)
+                .get();
         String message = Messages.printCustomMessage(prnt);
         System.out.print(message);
     }
