@@ -26,10 +26,10 @@ public class MyList {
             String prntMessage;
             if (action == 1) {
                 markIndexAsDone(index);
-                prntMessage = "Nice! I've marked this task as done:\n";
+                prntMessage = "Nice! I've marked this task as done:\n\u00A0\u00A0";
             } else {
                 markIndexAsNotDone(index);
-                prntMessage = "OK, I've marked this task as not done yet:\n";
+                prntMessage = "OK, I've marked this task as not done yet:\n\u00A0\u00A0";
             }
             prntMessage += items.get(index).toString();
             System.out.println(Messages.printCustomMessage(prntMessage));
