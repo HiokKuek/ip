@@ -40,6 +40,10 @@ public class MyList {
     }
 
     public void printList() {
+        if (items.isEmpty()) {
+            System.out.println(Messages.printCustomMessage("No tasks in the list."));
+            return;
+        }
         String prnt = items
                 .stream()
                 .map(t -> String.format("%d.%s", items.indexOf(t) + 1, t))

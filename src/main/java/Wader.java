@@ -14,10 +14,11 @@ public class Wader {
         Scanner inputScanner = new Scanner(System.in);
         MyList myList = new MyList();
         while (true) {
-            user_input = inputScanner.next();
-            if (user_input.equals("bye")) {
+            user_input = inputScanner.nextLine();
+            user_input = user_input.strip();
+            if (user_input.startsWith("bye")) {
                 break;
-            } else if (user_input.equals("list")) {
+            } else if (user_input.startsWith("list")) {
                 myList.printList();
             } else if (user_input.startsWith("mark")) {
                 int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
