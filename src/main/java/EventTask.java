@@ -18,7 +18,7 @@ public class EventTask extends Task {
 
     @Override
     public String toString() {
-        return "[E] " + super.toString() + " (from: " + fromTime + " to: " + toTime + ")";
+        return String.format("[E]%s (from: %s to: %s)", super.toString(), fromTime, toTime);
     }
 
 }

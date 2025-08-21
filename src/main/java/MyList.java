@@ -8,9 +8,46 @@ public class MyList {
         items = new ArrayList<>();
     }
 
-    public void add(String item) {
-        Task newTask = new Task(item);
-        items.add(newTask);
+    public void addAndPrint(String item) {
+        Task task;
+        if (item.startsWith("todo")) {
+            item = item.substring(5).strip(); // Remove "todo " prefix
+            task = new ToDoTask(item);
+            addAndPrint(task);
+
+        } else if (item.startsWith("deadline")) {
+            item = item.substring(9).strip(); // Remove "deadline " prefix
+            String[] parts = item.split(" /by ");
+            if (parts.length == 2) {
+                task = new DeadlineTask(parts[0], parts[1]);
+                addAndPrint(task);
+            } else {
+                System.out.println(Messages.printCustomMessage("Invalid deadline format"));
+                return;
+            }
+
+        } else if (item.startsWith("event")) {
+            item = item.substring(6).strip(); // Remove "event " prefix
+            String[] parts = item.split(" /from | /to ");
+            if (parts.length == 3) {
+                task = new EventTask(parts[0], parts[1], parts[2]);
+                addAndPrint(task);
+            } else {
+                System.out.println(Messages.printCustomMessage("Invalid event format"));
+                return;
+            }
+        } else {
+            // Default case, treat as a generic task
+            System.out.println(Messages.printCustomMessage("Invalid Task Type"));
+        }
+    }
+
+    private void addAndPrint(Task task) {
+        items.add(task);
+        String message = "Got it. I've added this task:\n" + Messages.INDENTATION +
+                task.toString() + "\n" +
+                "Now you have " + items.size() + " tasks in the list.";
+        System.out.println(Messages.printCustomMessage(message));
     }
 
     private void markIndexAsDone(int index) {
@@ -26,10 +63,10 @@ public class MyList {
             String prntMessage;
             if (action == 1) {
                 markIndexAsDone(index);
-                prntMessage = "Nice! I've marked this task as done:\n\u00A0\u00A0";
+                prntMessage = "Nice! I've marked this task as done:\n" + Messages.INDENTATION;
             } else {
                 markIndexAsNotDone(index);
-                prntMessage = "OK, I've marked this task as not done yet:\n\u00A0\u00A0";
+                prntMessage = "OK, I've marked this task as not done yet:\n" + Messages.INDENTATION;
             }
             prntMessage += items.get(index).toString();
             System.out.println(Messages.printCustomMessage(prntMessage));

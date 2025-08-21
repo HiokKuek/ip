@@ -28,8 +28,7 @@ public class Wader {
                 int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
                 myList.markAndPrint(index, 0);
             } else {
-                myList.add(user_input);
-                System.out.println(Messages.printCustomMessage("Added: " + user_input));
+                myList.addAndPrint(user_input);
             }
         }
         inputScanner.close();
