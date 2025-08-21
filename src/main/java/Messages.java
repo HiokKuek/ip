@@ -3,6 +3,7 @@ public class Messages {
     public static final String WELCOME_MESSAGE = "Hello! I'm Wader\n" +
             "What can I do for you?\n";
     public static final String GOODBYE_MESSAGE = "Bye. Hope to see you soon!\n";
+    public static final String INDENTATION = "\u00A0\u00A0";
 
     public static String getWelcomeMessage() {
         return HORIZONTAL_LINE + WELCOME_MESSAGE + HORIZONTAL_LINE;
