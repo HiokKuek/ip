@@ -13,18 +13,22 @@ public class Wader {
         String user_input = "";
         Scanner inputScanner = new Scanner(System.in);
         MyList myList = new MyList();
-        while (!user_input.equals("bye")) {
-            user_input = inputScanner.nextLine();
-            switch (user_input) {
-                case "list":
-                    myList.printList();
-                    break;
+        while (true) {
+            user_input = inputScanner.next();
+            if (user_input.equals("bye")) {
+                break;
+            } else if (user_input.equals("list")) {
+                myList.printList();
+            } else if (user_input.startsWith("mark")) {
+                int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
+                myList.markAndPrint(index, 1);
 
-                default:
-                    myList.add(user_input);
-                    System.out.println(Messages.printCustomMessage("Added: " + user_input));
-                    break;
-
+            } else if (user_input.startsWith("unmark")) {
+                int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
+                myList.markAndPrint(index, 0);
+            } else {
+                myList.add(user_input);
+                System.out.println(Messages.printCustomMessage("Added: " + user_input));
             }
         }
         inputScanner.close();
