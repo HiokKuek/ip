@@ -14,21 +14,26 @@ public class Wader {
         Scanner inputScanner = new Scanner(System.in);
         MyList myList = new MyList();
         while (true) {
-            user_input = inputScanner.nextLine();
-            user_input = user_input.strip();
-            if (user_input.startsWith("bye")) {
-                break;
-            } else if (user_input.startsWith("list")) {
-                myList.printList();
-            } else if (user_input.startsWith("mark")) {
-                int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
-                myList.markAndPrint(index, 1);
+            try {
+                user_input = inputScanner.nextLine();
+                user_input = user_input.strip();
+                if (user_input.startsWith("bye")) {
+                    break;
+                } else if (user_input.startsWith("list")) {
+                    myList.printList();
+                } else if (user_input.startsWith("mark")) {
+                    int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
+                    myList.markAndPrint(index, 1);
 
-            } else if (user_input.startsWith("unmark")) {
-                int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
-                myList.markAndPrint(index, 0);
-            } else {
-                myList.addAndPrint(user_input);
+                } else if (user_input.startsWith("unmark")) {
+                    int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
+                    myList.markAndPrint(index, 0);
+                } else {
+                    myList.addAndPrint(user_input);
+                }
+
+            } catch (DukeException e) {
+                System.out.println(Messages.printCustomMessage(e.getMessage()));
             }
         }
         inputScanner.close();

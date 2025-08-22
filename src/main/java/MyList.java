@@ -8,37 +8,33 @@ public class MyList {
         items = new ArrayList<>();
     }
 
-    public void addAndPrint(String item) {
+    public void addAndPrint(String item) throws DukeException {
         Task task;
         if (item.startsWith("todo")) {
-            item = item.substring(5).strip(); // Remove "todo " prefix
+            item = item.substring(4).strip(); // Remove "todo " prefix
+            if (item == "")
+                throw new DukeException("OOPS!!! The descripion of a todo cannot be empty.");
             task = new ToDoTask(item);
             addAndPrint(task);
 
         } else if (item.startsWith("deadline")) {
-            item = item.substring(9).strip(); // Remove "deadline " prefix
+            item = item.substring(8).strip(); // Remove "deadline " prefix
             String[] parts = item.split(" /by ");
-            if (parts.length == 2) {
-                task = new DeadlineTask(parts[0], parts[1]);
-                addAndPrint(task);
-            } else {
-                System.out.println(Messages.printCustomMessage("Invalid deadline format"));
-                return;
-            }
+            if (parts.length != 2)
+                throw new DukeException("OOPS!!! Invalid deadline format.");
+            task = new DeadlineTask(parts[0], parts[1]);
+            addAndPrint(task);
 
         } else if (item.startsWith("event")) {
-            item = item.substring(6).strip(); // Remove "event " prefix
+            item = item.substring(5).strip(); // Remove "event " prefix
             String[] parts = item.split(" /from | /to ");
-            if (parts.length == 3) {
-                task = new EventTask(parts[0], parts[1], parts[2]);
-                addAndPrint(task);
-            } else {
-                System.out.println(Messages.printCustomMessage("Invalid event format"));
-                return;
-            }
+            if (parts.length != 3)
+                throw new DukeException("OOPS!!! Invalid event format.");
+            task = new EventTask(parts[0], parts[1], parts[2]);
+            addAndPrint(task);
         } else {
             // Default case, treat as a generic task
-            System.out.println(Messages.printCustomMessage("Invalid Task Type"));
+            throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
     }
 
