@@ -8,3 +8,5 @@ unmark 1
 list 
 blsfjd
 todo
+delete 2
+list
