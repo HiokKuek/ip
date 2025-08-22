@@ -32,9 +32,29 @@ public class MyList {
                 throw new DukeException("OOPS!!! Invalid event format.");
             task = new EventTask(parts[0], parts[1], parts[2]);
             addAndPrint(task);
+        } else if (item.startsWith("delete")) {
+            item = item.substring(6).strip();
+            if (item == "") {
+                throw new DukeException("OOPS!!! Please produced a task number.");
+            }
+            int index = Integer.parseInt(item) - 1;
+            deleteAndPrint(index);
+
         } else {
             // Default case, treat as a generic task
             throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+        }
+    }
+
+    private void deleteAndPrint(int index) {
+        try {
+            Task removedTask = items.remove(index);
+            String message = "Noted. I've removed this task:\n" + Messages.INDENTATION +
+                    removedTask.toString() + "\n" +
+                    "Now you have " + items.size() + " tasks in the list.";
+            System.out.println(Messages.printCustomMessage(message));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(Messages.printCustomMessage("Invalid task index"));
         }
     }
 
