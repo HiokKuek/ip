@@ -28,6 +28,7 @@ public class Wader {
         String user_input = "";
         Scanner inputScanner = new Scanner(System.in);
         WaderList myList = new WaderList();
+
         while (true) {
             try {
                 user_input = inputScanner.nextLine();
@@ -38,11 +39,25 @@ public class Wader {
                     myList.printList();
                 } else if (user_input.startsWith("mark")) {
                     int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
-                    myList.markAndPrint(index, 1);
+                    boolean res = myList.mark(index);
+                    if (res) {
+                        String prntMessage = "Nice! I've marked this task as done:\n" + Messages.INDENTATION +
+                                myList.getTaskString(index);
+                        System.out.println(Messages.printCustomMessage(prntMessage));
+                    } else {
+                        System.out.println(Messages.printCustomMessage("Invalid task index."));
+                    }
 
                 } else if (user_input.startsWith("unmark")) {
                     int index = Integer.parseInt(user_input.split(" ")[1]) - 1;
-                    myList.markAndPrint(index, 0);
+                    boolean res = myList.unmark(index);
+                    if (res) {
+                        String prntMessage = "OK, I've marked this task as not done yet:\n" + Messages.INDENTATION +
+                                myList.getTaskString(index);
+                        System.out.println(Messages.printCustomMessage(prntMessage));
+                    } else {
+                        System.out.println(Messages.printCustomMessage("Invalid task index."));
+                    }
                 } else {
                     myList.addAndPrint(user_input);
                 }

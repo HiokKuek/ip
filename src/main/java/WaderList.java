@@ -66,30 +66,24 @@ public class WaderList {
         System.out.println(Messages.printCustomMessage(message));
     }
 
-    private void markIndexAsDone(int index) {
-        items.get(index).markAsDone();
-    }
-
-    private void markIndexAsNotDone(int index) {
-        items.get(index).markAsNotDone();
-    }
-
-    public void markAndPrint(int index, int action) {
+    public boolean mark(int index) {
         try {
-            String prntMessage;
-            if (action == 1) {
-                markIndexAsDone(index);
-                prntMessage = "Nice! I've marked this task as done:\n" + Messages.INDENTATION;
-            } else {
-                markIndexAsNotDone(index);
-                prntMessage = "OK, I've marked this task as not done yet:\n" + Messages.INDENTATION;
-            }
-            prntMessage += items.get(index).toString();
-            System.out.println(Messages.printCustomMessage(prntMessage));
+            items.get(index).markAsDone();
         } catch (IndexOutOfBoundsException e) {
-            String prntMessage = Messages.printCustomMessage("Invalid task index");
-            System.out.println(prntMessage);
+            return false;
         }
+
+        return true;
+    }
+
+    public boolean unmark(int index) {
+        try {
+            items.get(index).markAsNotDone();
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+
+        return true;
     }
 
     public void printList() {
@@ -104,6 +98,15 @@ public class WaderList {
                 .get();
         String message = Messages.printCustomMessage(prnt);
         System.out.print(message);
+    }
+
+    public String getTaskString(int index) {
+        return items.get(index).toString();
+
+    }
+
+    public String getListSummary() {
+        return "Now you have " + items.size() + " tasks in the list.";
     }
 
 }
