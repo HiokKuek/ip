@@ -1,5 +1,5 @@
 public class Messages {
-    public static final String HORIZONTAL_LINE = "____________________________________________________________\n";
+    public static final String HORIZONTAL_LINE = "____________________________________________________________\n\n";
     public static final String WELCOME_MESSAGE = "Hello! I'm Wader\n" +
             "What can I do for you?\n";
     public static final String GOODBYE_MESSAGE = "Bye. Hope to see you soon!\n";
