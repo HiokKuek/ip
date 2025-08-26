@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyList {
+public class WaderList {
     List<Task> items;
 
-    public MyList() {
+    public WaderList() {
         items = new ArrayList<>();
     }
 

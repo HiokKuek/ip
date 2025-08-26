@@ -1,18 +1,33 @@
 import java.util.Scanner;
 
 public class Wader {
-    public static void main(String[] args) {
-        Wader.printMessages();
+
+    WaderList waderList;
+
+    public Wader() {
+        this.waderList = new WaderList();
     }
 
-    private static void printMessages() {
+    public static void main(String[] args) {
+        Wader.serve();
+    }
+
+    private static void serve() {
         // Print Welcome Message
         System.out.println(Messages.getWelcomeMessage());
 
+        // Take in user input
+        scanInput();
+
+        // Print Goodby Message
+        System.out.println(Messages.getGoodbyeMessage());
+    }
+
+    private static void scanInput() {
         // Echo user_input
         String user_input = "";
         Scanner inputScanner = new Scanner(System.in);
-        MyList myList = new MyList();
+        WaderList myList = new WaderList();
         while (true) {
             try {
                 user_input = inputScanner.nextLine();
@@ -37,9 +52,6 @@ public class Wader {
             }
         }
         inputScanner.close();
-
-        // Print Goodby Message
-        System.out.println(Messages.getGoodbyeMessage());
 
     }
 }
