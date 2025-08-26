@@ -1,12 +1,8 @@
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.nio.file.Paths;
 
 public class Wader {
-
-    WaderList waderList;
-
-    public Wader() {
-        this.waderList = new WaderList();
-    }
 
     public static void main(String[] args) {
         Wader.serve();
@@ -52,6 +48,7 @@ public class Wader {
                 } else {
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
+                Wader.saveList(myList);
 
             } catch (DukeException e) {
                 System.out.println(Messages.printCustomMessage(e.getMessage()));
@@ -60,6 +57,27 @@ public class Wader {
             }
         }
         inputScanner.close();
+    }
+
+    private static void saveList(WaderList waderList) {
+        try {
+            String fileName = "Wader.txt";
+            java.io.File file = new java.io.File(fileName);
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter writer = new FileWriter(file);
+            String toWrite = "";
+            for (int i = 0; i < waderList.getSize(); i++) {
+                toWrite += waderList.getTaskString(i) + "\n";
+            }
+            writer.write(toWrite);
+            writer.close();
+        } catch (java.io.IOException e) {
+            System.out.println("An error occurred while saving the file: " + e.getMessage());
+        }
     }
 
     private static void printList(WaderList waderList) {
