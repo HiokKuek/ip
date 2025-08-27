@@ -1,14 +1,19 @@
 import java.util.Scanner;
 import java.io.FileWriter;
-import java.nio.file.Paths;
 
 public class Wader {
 
-    public static void main(String[] args) {
-        Wader.serve();
+    private WaderList tasks;
+
+    public Wader(String filePath) {
+        tasks = new WaderList();
     }
 
-    private static void serve() {
+    public static void main(String[] args) {
+        new Wader("Wader.txt").serve();
+    }
+
+    private void serve() {
         // Print Welcome Message
         System.out.println(Messages.getWelcomeMessage());
 
@@ -19,11 +24,10 @@ public class Wader {
         System.out.println(Messages.getGoodbyeMessage());
     }
 
-    private static void scanInput() {
+    private void scanInput() {
         // Echo user_input
         String user_input = "";
         Scanner inputScanner = new Scanner(System.in);
-        WaderList myList = new WaderList();
 
         while (true) {
             try {
@@ -32,23 +36,23 @@ public class Wader {
                 if (user_input.startsWith("bye")) {
                     break;
                 } else if (user_input.startsWith("list")) {
-                    printList(myList);
+                    printList(tasks);
                 } else if (user_input.startsWith("mark")) {
-                    handleMark(user_input, myList);
+                    handleMark(user_input, tasks);
                 } else if (user_input.startsWith("unmark")) {
-                    handleUnmark(user_input, myList);
+                    handleUnmark(user_input, tasks);
                 } else if (user_input.startsWith("todo")) {
-                    handleTodo(user_input, myList);
+                    handleTodo(user_input, tasks);
                 } else if (user_input.startsWith("deadline")) {
-                    handleDeadline(user_input, myList);
+                    handleDeadline(user_input, tasks);
                 } else if (user_input.startsWith("event")) {
-                    handleEvent(user_input, myList);
+                    handleEvent(user_input, tasks);
                 } else if (user_input.startsWith("delete")) {
-                    handleDelete(user_input, myList);
+                    handleDelete(user_input, tasks);
                 } else {
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
-                Wader.saveList(myList);
+                Wader.saveList(tasks);
 
             } catch (DukeException e) {
                 System.out.println(Messages.printCustomMessage(e.getMessage()));
