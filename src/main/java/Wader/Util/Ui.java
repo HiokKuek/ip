@@ -1,8 +1,8 @@
-package Wader.util;
+package Wader.Util;
 
 import java.util.Scanner;
 
-import Wader.util.Messages;
+import Wader.Util.Messages;
 
 import Wader.Task.Task;
 

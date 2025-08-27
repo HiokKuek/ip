@@ -1,6 +1,6 @@
-package Wader.util;
+package Wader.Util;
 
-import DukeException;
+import Wader.Util.DukeException;
 
 public class Parser {
 

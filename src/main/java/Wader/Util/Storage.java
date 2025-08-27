@@ -1,11 +1,12 @@
-package Wader.util;
+package Wader.Util;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import DukeException;
+import Wader.Util.DukeException;
 
 public class Storage {
     private String filePath;
