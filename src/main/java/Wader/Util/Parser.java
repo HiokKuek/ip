@@ -1,3 +1,7 @@
+package Wader.util;
+
+import DukeException;
+
 public class Parser {
 
     public enum CommandType {

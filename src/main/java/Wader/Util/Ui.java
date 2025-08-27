@@ -1,4 +1,10 @@
+package Wader.util;
+
 import java.util.Scanner;
+
+import Wader.util.Messages;
+
+import Wader.Task.Task;
 
 public class Ui {
     private Scanner scanner;

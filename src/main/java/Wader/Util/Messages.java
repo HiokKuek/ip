@@ -1,3 +1,4 @@
+package Wader.util;
 public class Messages {
     public static final String HORIZONTAL_LINE = "____________________________________________________________\n\n";
     public static final String WELCOME_MESSAGE = "Hello! I'm Wader\n" +

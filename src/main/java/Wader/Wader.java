@@ -1,3 +1,14 @@
+package Wader;
+
+import Wader.Util.DukeException;
+import Wader.Task.Task;
+import Wader.Util.Parser;
+import Wader.Util.Storage;
+import Wader.Util.Ui;
+import Wader.Util.WaderList;
+import Wader.Util.Parser.Command;
+import Wader.Util.Parser.CommandType;
+
 public class Wader {
 
     private WaderList tasks;
