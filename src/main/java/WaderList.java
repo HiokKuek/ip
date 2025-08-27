@@ -15,7 +15,10 @@ public class WaderList {
     }
 
     public Task addDeadlineTask(String desc, String deadline) {
-        Task task = new DeadlineTask(desc, deadline);
+        String[] parts = deadline.split(" ");
+        String date = parts[0];
+        String time = parts[1];
+        Task task = new DeadlineTask(desc, date, time);
         items.add(task);
         return task;
     }
