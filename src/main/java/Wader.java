@@ -1,13 +1,18 @@
-import java.io.FileWriter;
-
 public class Wader {
 
     private WaderList tasks;
     private Ui ui;
+    private Storage storage;
 
     public Wader(String filePath) {
-        tasks = new WaderList();
         ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = storage.load();
+        } catch (DukeException e) {
+            ui.showError(e.getMessage());
+            tasks = new WaderList();
+        }
     }
 
     public static void main(String[] args) {
@@ -52,34 +57,17 @@ public class Wader {
                 } else {
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
-                Wader.saveList(tasks);
+                try {
+                    storage.save(tasks);
+                } catch (DukeException e) {
+                    ui.showError("Error saving tasks: " + e.getMessage());
+                }
 
             } catch (DukeException e) {
                 ui.showError(e.getMessage());
             } catch (NumberFormatException e) {
                 ui.showError("Invalid task number format.");
             }
-        }
-    }
-
-    private static void saveList(WaderList waderList) {
-        try {
-            String fileName = "Wader.txt";
-            java.io.File file = new java.io.File(fileName);
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            FileWriter writer = new FileWriter(file);
-            String toWrite = "";
-            for (int i = 0; i < waderList.getSize(); i++) {
-                toWrite += waderList.getTaskString(i) + "\n";
-            }
-            writer.write(toWrite);
-            writer.close();
-        } catch (java.io.IOException e) {
-            System.out.println("An error occurred while saving the file: " + e.getMessage());
         }
     }
 
