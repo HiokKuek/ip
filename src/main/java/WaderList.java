@@ -1,3 +1,4 @@
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,18 +15,42 @@ public class WaderList {
         return task;
     }
 
-    public Task addDeadlineTask(String desc, String deadline) {
-        String[] parts = deadline.split(" ");
-        String date = parts[0];
-        String time = parts[1];
-        Task task = new DeadlineTask(desc, date, time);
-        items.add(task);
+    public Task addDeadlineTask(String desc, String deadline) throws DukeException {
+        Task task;
+        try {
+            String[] parts = deadline.split(" ");
+            if (parts.length != 2) {
+                throw new DateTimeParseException("Invalid deadline format", deadline, 0);
+            }
+            String date = parts[0];
+            String time = parts[1];
+            task = new DeadlineTask(desc, date, time);
+            items.add(task);
+        } catch (DateTimeParseException e) {
+            throw new DukeException("Invalid deadline format. Please use 'date time' format.");
+        }
         return task;
     }
 
-    public Task addEventTask(String desc, String from, String to) {
-        Task task = new EventTask(desc, from, to);
-        items.add(task);
+    public Task addEventTask(String desc, String from, String to) throws DukeException {
+        Task task;
+        try {
+            String[] fromParts = from.split(" ");
+            String[] toParts = to.split(" ");
+            if (fromParts.length != 2 || toParts.length != 2) {
+                throw new DateTimeParseException("Invalid event format", from + " " + to, 0);
+            }
+            String fromDateString = fromParts[0];
+            String toDateString = toParts[0];
+            String fromTimeString = fromParts[1];
+            String toTimeString = toParts[1];
+
+            task = new EventTask(desc, fromTimeString, toTimeString, fromDateString, toDateString);
+            items.add(task);
+
+        } catch (DateTimeParseException e) {
+            throw new DukeException("Invalid event format. Please use 'date time' format.");
+        }
         return task;
     }
 

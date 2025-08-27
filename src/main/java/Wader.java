@@ -1,181 +1,124 @@
-import java.util.Scanner;
-import java.io.FileWriter;
-import java.nio.file.Paths;
-
 public class Wader {
 
-    public static void main(String[] args) {
-        Wader.serve();
+    private WaderList tasks;
+    private Ui ui;
+    private Storage storage;
+
+    public Wader(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = storage.load();
+        } catch (DukeException e) {
+            ui.showError(e.getMessage());
+            tasks = new WaderList();
+        }
     }
 
-    private static void serve() {
+    public static void main(String[] args) {
+        new Wader("Wader.txt").serve();
+    }
+
+    private void serve() {
         // Print Welcome Message
-        System.out.println(Messages.getWelcomeMessage());
+        ui.showWelcomeMessage();
 
         // Take in user input
         scanInput();
 
-        // Print Goodby Message
-        System.out.println(Messages.getGoodbyeMessage());
+        // Print Goodbye Message
+        ui.showGoodbyeMessage();
+        ui.close();
     }
 
-    private static void scanInput() {
+    private void scanInput() {
         // Echo user_input
         String user_input = "";
-        Scanner inputScanner = new Scanner(System.in);
-        WaderList myList = new WaderList();
 
         while (true) {
             try {
-                user_input = inputScanner.nextLine();
-                user_input = user_input.strip();
-                if (user_input.startsWith("bye")) {
-                    break;
-                } else if (user_input.startsWith("list")) {
-                    printList(myList);
-                } else if (user_input.startsWith("mark")) {
-                    handleMark(user_input, myList);
-                } else if (user_input.startsWith("unmark")) {
-                    handleUnmark(user_input, myList);
-                } else if (user_input.startsWith("todo")) {
-                    handleTodo(user_input, myList);
-                } else if (user_input.startsWith("deadline")) {
-                    handleDeadline(user_input, myList);
-                } else if (user_input.startsWith("event")) {
-                    handleEvent(user_input, myList);
-                } else if (user_input.startsWith("delete")) {
-                    handleDelete(user_input, myList);
+                user_input = ui.readCommand();
+                Parser.Command command = Parser.parse(user_input);
+
+                if (command.getType() == Parser.CommandType.BYE) {
+                    return; // Exit the loop
+                } else if (command.getType() == Parser.CommandType.LIST) {
+                    ui.showTaskList(tasks);
+                } else if (command.getType() == Parser.CommandType.MARK) {
+                    handleMark(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.UNMARK) {
+                    handleUnmark(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.TODO) {
+                    handleTodo(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.DEADLINE) {
+                    handleDeadline(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.EVENT) {
+                    handleEvent(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.DELETE) {
+                    handleDelete(command.getFullCommand(), tasks);
                 } else {
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
-                Wader.saveList(myList);
+
+                try {
+                    storage.save(tasks);
+                } catch (DukeException e) {
+                    ui.showError("Error saving tasks: " + e.getMessage());
+                }
 
             } catch (DukeException e) {
-                System.out.println(Messages.printCustomMessage(e.getMessage()));
+                ui.showError(e.getMessage());
             } catch (NumberFormatException e) {
-                System.out.println(Messages.printCustomMessage("Invalid task number format."));
+                ui.showError("Invalid task number format.");
             }
-        }
-        inputScanner.close();
-    }
-
-    private static void saveList(WaderList waderList) {
-        try {
-            String fileName = "Wader.txt";
-            java.io.File file = new java.io.File(fileName);
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            FileWriter writer = new FileWriter(file);
-            String toWrite = "";
-            for (int i = 0; i < waderList.getSize(); i++) {
-                toWrite += waderList.getTaskString(i) + "\n";
-            }
-            writer.write(toWrite);
-            writer.close();
-        } catch (java.io.IOException e) {
-            System.out.println("An error occurred while saving the file: " + e.getMessage());
         }
     }
 
-    private static void printList(WaderList waderList) {
-        if (waderList.isEmpty()) {
-            System.out.println(Messages.printCustomMessage("No tasks in the list."));
-            return;
-        }
-        String prnt = waderList.getTasks()
-                .stream()
-                .map(t -> String.format("%d.%s", waderList.getTasks().indexOf(t) + 1, t))
-                .reduce((x, y) -> x + "\n" + y)
-                .get();
-        String message = Messages.printCustomMessage(prnt);
-        System.out.print(message);
-    }
-
-    private static void handleMark(String input, WaderList waderList) throws DukeException {
-        String[] parts = input.split(" ");
-        if (parts.length < 2) {
-            throw new DukeException("Please provide a task number to mark.");
-        }
-        int index = Integer.parseInt(parts[1]) - 1;
+    private void handleMark(String input, WaderList waderList) throws DukeException {
+        int index = Parser.parseTaskIndex(input, "mark");
         boolean res = waderList.mark(index);
         if (res) {
-            String prntMessage = "Nice! I've marked this task as done:\n" + Messages.INDENTATION +
-                    waderList.getTaskString(index);
-            System.out.println(Messages.printCustomMessage(prntMessage));
+            ui.showTaskMarked(waderList, index);
         } else {
-            System.out.println(Messages.printCustomMessage("Invalid task index."));
+            ui.showError("Invalid task index.");
         }
     }
 
-    private static void handleUnmark(String input, WaderList waderList) throws DukeException {
-        String[] parts = input.split(" ");
-        if (parts.length < 2) {
-            throw new DukeException("Please provide a task number to unmark.");
-        }
-        int index = Integer.parseInt(parts[1]) - 1;
+    private void handleUnmark(String input, WaderList waderList) throws DukeException {
+        int index = Parser.parseTaskIndex(input, "unmark");
         boolean res = waderList.unmark(index);
         if (res) {
-            String prntMessage = "OK, I've marked this task as not done yet:\n" + Messages.INDENTATION +
-                    waderList.getTaskString(index);
-            System.out.println(Messages.printCustomMessage(prntMessage));
+            ui.showTaskUnmarked(waderList, index);
         } else {
-            System.out.println(Messages.printCustomMessage("Invalid task index."));
+            ui.showError("Invalid task index.");
         }
     }
 
-    private static void handleTodo(String input, WaderList waderList) throws DukeException {
-        String desc = input.substring(4).strip(); // Remove "todo " prefix
-        if (desc.isEmpty()) {
-            throw new DukeException("OOPS!!! The descripion of a todo cannot be empty.");
-        }
+    private void handleTodo(String input, WaderList waderList) throws DukeException {
+        String desc = Parser.parseTodoDescription(input);
         Task task = waderList.addToDoTask(desc);
-        printTaskAdded(task, waderList);
+        ui.showTaskAdded(task, waderList);
     }
 
-    private static void handleDeadline(String input, WaderList waderList) throws DukeException {
-        String content = input.substring(8).strip(); // Remove "deadline " prefix
-        String[] parts = content.split(" /by ");
-        if (parts.length != 2) {
-            throw new DukeException("OOPS!!! Invalid deadline format.");
-        }
+    private void handleDeadline(String input, WaderList waderList) throws DukeException {
+        String[] parts = Parser.parseDeadlineCommand(input);
         Task task = waderList.addDeadlineTask(parts[0], parts[1]);
-        printTaskAdded(task, waderList);
+        ui.showTaskAdded(task, waderList);
     }
 
-    private static void handleEvent(String input, WaderList waderList) throws DukeException {
-        String content = input.substring(5).strip(); // Remove "event " prefix
-        String[] parts = content.split(" /from | /to ");
-        if (parts.length != 3) {
-            throw new DukeException("OOPS!!! Invalid event format.");
-        }
+    private void handleEvent(String input, WaderList waderList) throws DukeException {
+        String[] parts = Parser.parseEventCommand(input);
         Task task = waderList.addEventTask(parts[0], parts[1], parts[2]);
-        printTaskAdded(task, waderList);
+        ui.showTaskAdded(task, waderList);
     }
 
-    private static void handleDelete(String input, WaderList waderList) throws DukeException {
-        String indexStr = input.substring(6).strip();
-        if (indexStr.isEmpty()) {
-            throw new DukeException("OOPS!!! Please produced a task number.");
-        }
+    private void handleDelete(String input, WaderList waderList) throws DukeException {
         try {
-            int index = Integer.parseInt(indexStr) - 1;
+            int index = Parser.parseDeleteIndex(input);
             Task removedTask = waderList.delete(index);
-            String message = "Noted. I've removed this task:\n" + Messages.INDENTATION +
-                    removedTask.toString() + "\n" +
-                    "Now you have " + waderList.getSize() + " tasks in the list.";
-            System.out.println(Messages.printCustomMessage(message));
+            ui.showTaskDeleted(removedTask, waderList);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println(Messages.printCustomMessage("Invalid task index"));
+            ui.showError("Invalid task index");
         }
-    }
-
-    private static void printTaskAdded(Task task, WaderList waderList) {
-        String message = "Got it. I've added this task:\n" + Messages.INDENTATION +
-                task.toString() + "\n" +
-                "Now you have " + waderList.getSize() + " tasks in the list.";
-        System.out.println(Messages.printCustomMessage(message));
     }
 }

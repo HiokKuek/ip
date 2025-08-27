@@ -1,1 +1,2 @@
-[D][ ] return book (by: Oct 15 2019 6pm)
+[T][ ] borrow book
+[E][ ] project meeting (from: Aug 22 2025 2pm to: Aug 25 2025 11pm)
