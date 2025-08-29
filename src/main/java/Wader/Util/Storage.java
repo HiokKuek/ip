@@ -10,13 +10,35 @@ import Wader.Task.ToDoTask;
 import Wader.Task.DeadlineTask;
 import Wader.Task.EventTask;
 
+/**
+ * Handles the persistent storage of tasks to and from a file.
+ * This class provides functionality to save a WaderList to a file and load
+ * tasks
+ * from a file back into a WaderList, maintaining task completion status and
+ * formatting.
+ */
 public class Storage {
     private String filePath;
 
+    /**
+     * Constructs a Storage object with the specified file path.
+     * 
+     * @param filePath the path to the file where tasks will be saved and loaded
+     *                 from
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves all tasks from the given WaderList to the storage file.
+     * Each task is written as a string representation on a separate line.
+     * If the file doesn't exist, it will be created. If it exists, it will be
+     * overwritten.
+     * 
+     * @param waderList the WaderList containing tasks to be saved
+     * @throws DukeException if an error occurs during file writing operations
+     */
     public void save(WaderList waderList) throws DukeException {
         try {
             File file = new File(filePath);
@@ -37,6 +59,27 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the storage file and returns them as a WaderList.
+     * Parses each line in the file as a task string and recreates the appropriate
+     * Task objects (ToDoTask, DeadlineTask, or EventTask) with their completion
+     * status.
+     * If the file doesn't exist, returns an empty WaderList.
+     * 
+     * Supported task formats:
+     * <ul>
+     * <li>ToDo: [T][X] description or [T][ ] description</li>
+     * <li>Deadline: [D][X] description (by: deadline) or [D][ ] description (by:
+     * deadline)</li>
+     * <li>Event: [E][X] description (from: start to: end) or [E][ ] description
+     * (from: start to: end)</li>
+     * </ul>
+     * 
+     * @return a WaderList containing all tasks loaded from the file, or an empty
+     *         list if file doesn't exist
+     * @throws DukeException if an error occurs during file reading operations or if
+     *                       task parsing fails
+     */
     public WaderList load() throws DukeException {
         WaderList waderList = new WaderList();
         try {
