@@ -14,9 +14,20 @@ public class DeadlineTask extends Task {
         this.time = LocalTime.parse(timeString);
     }
 
+    /**
+     * Gets the date of the deadline task.
+     * 
+     * @return The formatted date string in "MMM d yyyy" format.
+     */
     public String getDate() {
         return date.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
     }
+
+    /**
+     * Gets the time of the deadline task.
+     * 
+     * @return The formatted time string in "ha" format e.g. "5pm".
+     */
 
     public String getTime() {
         return time.format(DateTimeFormatter.ofPattern("ha"));
