@@ -26,6 +26,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses user input into a Command object.
+     * 
+     * @param userInput The input string from the user.
+     * @return The Command object representing the user's command.
+     */
     public static Command parse(String userInput) {
         String trimmedInput = userInput.strip();
 
@@ -50,6 +56,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses the user input for the index.
+     * 
+     * @param input         The user input string.
+     * @param commandPrefix The command prefix to look for.
+     * @return the index
+     * @throws DukeException If the command is invalid.
+     */
     public static int parseTaskIndex(String input, String commandPrefix) throws DukeException {
         String[] parts = input.split(" ");
         if (parts.length < 2) {
@@ -62,6 +76,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses todo commands for the description
+     * 
+     * @param input The user input command.
+     * @return The parsed description.
+     * @throws DukeException If the input is invalid.
+     */
     public static String parseTodoDescription(String input) throws DukeException {
         String desc = input.substring(4).strip(); // Remove "todo " prefix
         if (desc.isEmpty()) {
@@ -70,6 +91,13 @@ public class Parser {
         return desc;
     }
 
+    /**
+     * Parses the user input for the description and deadline.
+     * 
+     * @param input The user command for deadline task.
+     * @return The parsed description and deadline as a array of strings.
+     * @throws DukeException If the input is invalid.
+     */
     public static String[] parseDeadlineCommand(String input) throws DukeException {
         String content = input.substring(8).strip(); // Remove "deadline " prefix
         String[] parts = content.split(" /by ");
@@ -79,6 +107,13 @@ public class Parser {
         return parts; // [description, deadline]
     }
 
+    /**
+     * Parses the user input for the description and fromTime and toTime.
+     * 
+     * @param input The user command for event task.
+     * @return The parsed description, fromTime, toTime as a array of strings.
+     * @throws DukeException If the input is invalid.
+     */
     public static String[] parseEventCommand(String input) throws DukeException {
         String content = input.substring(5).strip(); // Remove "event " prefix
         String[] parts = content.split(" /from | /to ");
@@ -88,6 +123,13 @@ public class Parser {
         return parts; // [description, from, to]
     }
 
+    /**
+     * Parses the user input for the index.
+     * 
+     * @param input The user command for delete task.
+     * @return The parsed index.
+     * @throws DukeException If the input is invalid.
+     */
     public static int parseDeleteIndex(String input) throws DukeException {
         String indexStr = input.substring(6).strip();
         if (indexStr.isEmpty()) {

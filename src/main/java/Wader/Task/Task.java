@@ -9,22 +9,43 @@ public class Task {
         this.isDone = false;
     }
 
+    /**
+     * Gets the description of a Task
+     * 
+     * @return The description of the Task
+     */
     public String getDescription() {
         return description;
     }
+
+    /**
+     * Gets the status of a Task
+     * 
+     * @return The status of the Task
+     */
 
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Marks the Task as done
+     */
     public void markAsDone() {
         this.isDone = true;
     }
 
+    /**
+     * Marks the Task as not done
+     */
     public void markAsNotDone() {
         this.isDone = false;
     }
 
+    /**
+     * Returns a string representation of the Task
+     * e.g. [E][X] event (from: Jan 1 2022 5pm to: Jan 2 2022 6pm)
+     */
     @Override
     public String toString() {
         return (isDone ? "[X] " : "[ ] ") + description;
