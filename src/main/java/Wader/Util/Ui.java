@@ -1,8 +1,7 @@
 package Wader.Util;
 
 import java.util.Scanner;
-
-import Wader.Util.Messages;
+import java.util.List;
 
 import Wader.Task.Task;
 
@@ -45,6 +44,20 @@ public class Ui {
         String prnt = waderList.getTasks()
                 .stream()
                 .map(t -> String.format("%d.%s", waderList.getTasks().indexOf(t) + 1, t))
+                .reduce((x, y) -> x + "\n" + y)
+                .get();
+        String message = Messages.printCustomMessage(prnt);
+        System.out.print(message);
+    }
+
+    public void showTaskList(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            showMessage("No matching tasks found.");
+            return;
+        }
+        String prnt = tasks
+                .stream()
+                .map(t -> String.format("%d.%s", tasks.indexOf(t) + 1, t))
                 .reduce((x, y) -> x + "\n" + y)
                 .get();
         String message = Messages.printCustomMessage(prnt);

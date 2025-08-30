@@ -5,7 +5,7 @@ import Wader.Util.DukeException;
 public class Parser {
 
     public enum CommandType {
-        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
+        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, FIND, UNKNOWN
     }
 
     public static class Command {
@@ -45,9 +45,20 @@ public class Parser {
             return new Command(CommandType.EVENT, trimmedInput);
         } else if (trimmedInput.startsWith("delete")) {
             return new Command(CommandType.DELETE, trimmedInput);
+
+        } else if (trimmedInput.startsWith("find")) {
+            return new Command(CommandType.FIND, trimmedInput);
         } else {
             return new Command(CommandType.UNKNOWN, trimmedInput);
         }
+    }
+
+    public static String parseFindKeyword(String input) throws DukeException {
+        String[] parts = input.split(" ");
+        if (parts.length != 2) {
+            throw new DukeException("Please provide a keyword for find.");
+        }
+        return parts[1];
     }
 
     public static int parseTaskIndex(String input, String commandPrefix) throws DukeException {
