@@ -9,6 +9,8 @@ import Wader.Util.WaderList;
 import Wader.Util.Parser.Command;
 import Wader.Util.Parser.CommandType;
 
+import java.util.List;
+
 public class Wader {
 
     private WaderList tasks;
@@ -67,6 +69,8 @@ public class Wader {
                     handleEvent(command.getFullCommand(), tasks);
                 } else if (command.getType() == Parser.CommandType.DELETE) {
                     handleDelete(command.getFullCommand(), tasks);
+                } else if (command.getType() == Parser.CommandType.FIND) {
+                    handleFind(command.getFullCommand(), tasks);
                 } else {
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
@@ -83,6 +87,12 @@ public class Wader {
                 ui.showError("Invalid task number format.");
             }
         }
+    }
+
+    private void handleFind(String input, WaderList waderList) throws DukeException {
+        String keyword = Parser.parseFindKeyword(input);
+        List<Task> foundTasks = waderList.findTasks(keyword);
+        ui.showTaskList(foundTasks);
     }
 
     private void handleMark(String input, WaderList waderList) throws DukeException {

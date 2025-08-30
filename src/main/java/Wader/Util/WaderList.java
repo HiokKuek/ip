@@ -86,6 +86,12 @@ public class WaderList {
         return true;
     }
 
+    public List<Task> findTasks(String keyword) {
+        return items.stream()
+                .filter(task -> task.getDescription().contains(keyword))
+                .toList();
+    }
+
     public List<Task> getTasks() {
         return new ArrayList<>(items);
     }
