@@ -1,17 +1,16 @@
-package Wader.Util;
+package wader.util;
 
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Wader.Util.DukeException;
-import Wader.Task.DeadlineTask;
-import Wader.Task.EventTask;
-import Wader.Task.Task;
-import Wader.Task.ToDoTask;
+import wader.task.DeadlineTask;
+import wader.task.EventTask;
+import wader.task.Task;
+import wader.task.ToDoTask;
 
 public class WaderList {
-    List<Task> items;
+    private List<Task> items;
 
     public WaderList() {
         items = new ArrayList<>();
@@ -87,9 +86,7 @@ public class WaderList {
     }
 
     public List<Task> findTasks(String keyword) {
-        return items.stream()
-                .filter(task -> task.getDescription().contains(keyword))
-                .toList();
+        return items.stream().filter(task -> task.getDescription().contains(keyword)).toList();
     }
 
     public List<Task> getTasks() {

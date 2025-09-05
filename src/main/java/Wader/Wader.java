@@ -1,15 +1,13 @@
-package Wader;
-
-import Wader.Util.DukeException;
-import Wader.Task.Task;
-import Wader.Util.Parser;
-import Wader.Util.Storage;
-import Wader.Util.Ui;
-import Wader.Util.WaderList;
-import Wader.Util.Parser.Command;
-import Wader.Util.Parser.CommandType;
+package wader;
 
 import java.util.List;
+
+import wader.task.Task;
+import wader.util.DukeException;
+import wader.util.Parser;
+import wader.util.Storage;
+import wader.util.Ui;
+import wader.util.WaderList;
 
 public class Wader {
 
@@ -45,13 +43,13 @@ public class Wader {
     }
 
     private void scanInput() {
-        // Echo user_input
-        String user_input = "";
+        // Echo userInput
+        String userInput = "";
 
         while (true) {
             try {
-                user_input = ui.readCommand();
-                Parser.Command command = Parser.parse(user_input);
+                userInput = ui.readCommand();
+                Parser.Command command = Parser.parse(userInput);
 
                 if (command.getType() == Parser.CommandType.BYE) {
                     return; // Exit the loop
@@ -72,7 +70,8 @@ public class Wader {
                 } else if (command.getType() == Parser.CommandType.FIND) {
                     handleFind(command.getFullCommand(), tasks);
                 } else {
-                    throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+                    throw new DukeException(
+                            "OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
 
                 try {

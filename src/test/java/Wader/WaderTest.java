@@ -1,8 +1,8 @@
-package Wader;
-
-import org.junit.jupiter.api.Test;
+package wader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class WaderTest {
     @Test

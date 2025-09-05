@@ -1,4 +1,4 @@
-package Wader.Task;
+package wader.task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,8 +11,8 @@ public class EventTask extends Task {
     private LocalDate fromDate;
     private LocalTime fromTime;
 
-    public EventTask(String description, String fromTimeString, String toTimeString, String fromDateString,
-            String toDateString) {
+    public EventTask(String description, String fromTimeString, String toTimeString,
+            String fromDateString, String toDateString) {
         super(description);
         this.toDate = LocalDate.parse(toDateString);
         this.toTime = LocalTime.parse(toTimeString);
@@ -22,7 +22,7 @@ public class EventTask extends Task {
 
     /**
      * Gets the from time of the event task.
-     * 
+     *
      * @return The formatted from time string in "ha" format e.g. "5pm".
      */
     public String getFromTime() {
@@ -31,7 +31,7 @@ public class EventTask extends Task {
 
     /**
      * Gets the to time of the event task.
-     * 
+     *
      * @return The formatted to time string in "ha" format e.g. "5pm".
      */
     public String getToTime() {
@@ -40,7 +40,7 @@ public class EventTask extends Task {
 
     /**
      * Gets the from date of the event task.
-     * 
+     *
      * @return The formatted from date string in "MMM d yyyy" format.
      */
 
@@ -50,7 +50,7 @@ public class EventTask extends Task {
 
     /**
      * Gets the to Date of the event task.
-     * 
+     *
      * @return The formatted to date string in "MMM d yyyy" format.
      */
     public String getToDate() {
@@ -60,8 +60,7 @@ public class EventTask extends Task {
     @Override
     public String toString() {
         return String.format("[E]%s (from: %s to: %s)", super.toString(),
-                getFromDate() + " " + getFromTime(),
-                getToDate() + " " + getToTime());
+                getFromDate() + " " + getFromTime(), getToDate() + " " + getToTime());
     }
 
 }

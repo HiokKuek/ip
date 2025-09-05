@@ -1,11 +1,14 @@
-package Wader.Util;
+package wader.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+
 
 public class ParserTest {
 
-    // Test parse() method for command recognition
     @Test
     public void parse_byeCommand_returnsByeCommandType() {
         Parser.Command command = Parser.parse("bye");

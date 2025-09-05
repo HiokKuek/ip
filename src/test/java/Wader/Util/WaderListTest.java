@@ -1,13 +1,18 @@
-package Wader.Util;
+package wader.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import Wader.Task.Task;
-import Wader.Task.ToDoTask;
-import Wader.Task.DeadlineTask;
-import Wader.Task.EventTask;
+import wader.task.DeadlineTask;
+import wader.task.EventTask;
+import wader.task.Task;
+import wader.task.ToDoTask;
+
 
 public class WaderListTest {
 

@@ -1,41 +1,38 @@
-package Wader.Util;
+package wader.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import Wader.Task.Task;
-import Wader.Task.ToDoTask;
-import Wader.Task.DeadlineTask;
-import Wader.Task.EventTask;
+
+import wader.task.DeadlineTask;
+import wader.task.EventTask;
+import wader.task.Task;
+import wader.task.ToDoTask;
 
 /**
- * Handles the persistent storage of tasks to and from a file.
- * This class provides functionality to save a WaderList to a file and load
- * tasks
- * from a file back into a WaderList, maintaining task completion status and
- * formatting.
+ * Handles the persistent storage of tasks to and from a file. This class provides functionality to
+ * save a WaderList to a file and load tasks from a file back into a WaderList, maintaining task
+ * completion status and formatting.
  */
 public class Storage {
     private String filePath;
 
     /**
      * Constructs a Storage object with the specified file path.
-     * 
-     * @param filePath the path to the file where tasks will be saved and loaded
-     *                 from
+     *
+     * @param filePath the path to the file where tasks will be saved and loaded from
      */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
     /**
-     * Saves all tasks from the given WaderList to the storage file.
-     * Each task is written as a string representation on a separate line.
-     * If the file doesn't exist, it will be created. If it exists, it will be
-     * overwritten.
-     * 
+     * Saves all tasks from the given WaderList to the storage file. Each task is written as a
+     * string representation on a separate line. If the file doesn't exist, it will be created. If
+     * it exists, it will be overwritten.
+     *
      * @param waderList the WaderList containing tasks to be saved
      * @throws DukeException if an error occurs during file writing operations
      */
@@ -60,25 +57,23 @@ public class Storage {
     }
 
     /**
-     * Loads tasks from the storage file and returns them as a WaderList.
-     * Parses each line in the file as a task string and recreates the appropriate
-     * Task objects (ToDoTask, DeadlineTask, or EventTask) with their completion
-     * status.
-     * If the file doesn't exist, returns an empty WaderList.
-     * 
+     * Loads tasks from the storage file and returns them as a WaderList. Parses each line in the
+     * file as a task string and recreates the appropriate Task objects (ToDoTask, DeadlineTask, or
+     * EventTask) with their completion status. If the file doesn't exist, returns an empty
+     * WaderList.
+     *
      * Supported task formats:
      * <ul>
      * <li>ToDo: [T][X] description or [T][ ] description</li>
-     * <li>Deadline: [D][X] description (by: deadline) or [D][ ] description (by:
-     * deadline)</li>
-     * <li>Event: [E][X] description (from: start to: end) or [E][ ] description
-     * (from: start to: end)</li>
+     * <li>Deadline: [D][X] description (by: deadline) or [D][ ] description (by: deadline)</li>
+     * <li>Event: [E][X] description (from: start to: end) or [E][ ] description (from: start to:
+     * end)</li>
      * </ul>
-     * 
-     * @return a WaderList containing all tasks loaded from the file, or an empty
-     *         list if file doesn't exist
-     * @throws DukeException if an error occurs during file reading operations or if
-     *                       task parsing fails
+     *
+     * @return a WaderList containing all tasks loaded from the file, or an empty list if file
+     *         doesn't exist
+     * @throws DukeException if an error occurs during file reading operations or if task parsing
+     *         fails
      */
     public WaderList load() throws DukeException {
         WaderList waderList = new WaderList();
@@ -108,12 +103,9 @@ public class Storage {
     }
 
     /**
-     * Parses a task string from the saved file format and creates the appropriate
-     * Task object.
-     * Expected formats:
-     * - [T][X] description (ToDo task)
-     * - [D][ ] description (by: deadline) (Deadline task)
-     * - [E][X] description (from: start to: end) (Event task)
+     * Parses a task string from the saved file format and creates the appropriate Task object.
+     * Expected formats: - [T][X] description (ToDo task) - [D][ ] description (by: deadline)
+     * (Deadline task) - [E][X] description (from: start to: end) (Event task)
      */
     private Task parseTaskFromString(String taskString) throws DukeException {
         if (taskString.length() < 6) {
@@ -123,7 +115,7 @@ public class Storage {
         // Extract task type and completion status
         char taskType = taskString.charAt(1); // T, D, or E
         boolean isDone = taskString.charAt(3) == 'X';
-        String content = taskString.substring(6).trim(); // Remove "[T][X] " or "[D][ ] " and trim extra spaces
+        String content = taskString.substring(6).trim(); // Remove "[T][X] " or "[D][ ] " and trim
 
         Task task = null;
 
@@ -135,13 +127,14 @@ public class Storage {
             int byIndex = content.lastIndexOf(" (by: ");
             if (byIndex != -1) {
                 String description = content.substring(0, byIndex);
-                String deadline = content.substring(byIndex + 6, content.length() - 1); // Remove " (by: " and ")"
+                String deadline = content.substring(byIndex + 6, content.length() - 1);
 
                 // Parse the deadline format "Aug 21 2025 6pm" -> "2025-08-21 18:00"
                 String[] deadlineParts = deadline.split(" ");
                 if (deadlineParts.length >= 4) {
-                    String dateStr = convertToISODate(deadlineParts[2], deadlineParts[0], deadlineParts[1]);
-                    String timeStr = convertToISOTime(deadlineParts[3]);
+                    String dateStr =
+                            convertToIsoDate(deadlineParts[2], deadlineParts[0], deadlineParts[1]);
+                    String timeStr = convertToIsoTime(deadlineParts[3]);
                     task = new DeadlineTask(description, dateStr, timeStr);
                 }
             }
@@ -152,17 +145,18 @@ public class Storage {
             if (fromIndex != -1 && toIndex != -1) {
                 String description = content.substring(0, fromIndex);
                 String from = content.substring(fromIndex + 8, toIndex);
-                String to = content.substring(toIndex + 5, content.length() - 1); // Remove " to: " and ")"
+                String to = content.substring(toIndex + 5, content.length() - 1); // Remove " to: "
 
                 // Parse from and to dates/times
                 String[] fromParts = from.split(" ");
                 String[] toParts = to.split(" ");
                 if (fromParts.length >= 4 && toParts.length >= 4) {
-                    String fromDateStr = convertToISODate(fromParts[2], fromParts[0], fromParts[1]);
-                    String fromTimeStr = convertToISOTime(fromParts[3]);
-                    String toDateStr = convertToISODate(toParts[2], toParts[0], toParts[1]);
-                    String toTimeStr = convertToISOTime(toParts[3]);
-                    task = new EventTask(description, fromTimeStr, toTimeStr, fromDateStr, toDateStr);
+                    String fromDateStr = convertToIsoDate(fromParts[2], fromParts[0], fromParts[1]);
+                    String fromTimeStr = convertToIsoTime(fromParts[3]);
+                    String toDateStr = convertToIsoDate(toParts[2], toParts[0], toParts[1]);
+                    String toTimeStr = convertToIsoTime(toParts[3]);
+                    task = new EventTask(description, fromTimeStr, toTimeStr, fromDateStr,
+                            toDateStr);
                 }
             }
         }
@@ -191,8 +185,8 @@ public class Storage {
                 String deadline = savedFormat.substring(byIndex + 6, savedFormat.length() - 1);
                 String[] parts = deadline.split(" ");
                 if (parts.length >= 4) {
-                    String dateStr = convertToISODate(parts[2], parts[0], parts[1]);
-                    String timeStr = convertToISOTime(parts[3]);
+                    String dateStr = convertToIsoDate(parts[2], parts[0], parts[1]);
+                    String timeStr = convertToIsoTime(parts[3]);
                     try {
                         waderList.addDeadlineTask(task.getDescription(), dateStr + " " + timeStr);
                     } catch (DukeException e) {
@@ -211,8 +205,7 @@ public class Storage {
             String toTimeStr = "23:00";
 
             try {
-                waderList.addEventTask(task.getDescription(),
-                        fromDateStr + " " + fromTimeStr,
+                waderList.addEventTask(task.getDescription(), fromDateStr + " " + fromTimeStr,
                         toDateStr + " " + toTimeStr);
             } catch (DukeException e) {
                 // Skip invalid tasks
@@ -229,7 +222,7 @@ public class Storage {
     /**
      * Converts date format from "2025 Aug 21" to "2025-08-21"
      */
-    private String convertToISODate(String year, String month, String day) {
+    private String convertToIsoDate(String year, String month, String day) {
         String monthNum = getMonthNumber(month);
         return year + "-" + monthNum + "-" + String.format("%02d", Integer.parseInt(day));
     }
@@ -237,16 +230,18 @@ public class Storage {
     /**
      * Converts time format from "6pm" to "18:00"
      */
-    private String convertToISOTime(String time) {
+    private String convertToIsoTime(String time) {
         if (time.toLowerCase().endsWith("pm")) {
             int hour = Integer.parseInt(time.substring(0, time.length() - 2));
-            if (hour != 12)
+            if (hour != 12) {
                 hour += 12;
+            }
             return String.format("%02d:00", hour);
         } else if (time.toLowerCase().endsWith("am")) {
             int hour = Integer.parseInt(time.substring(0, time.length() - 2));
-            if (hour == 12)
+            if (hour == 12) {
                 hour = 0;
+            }
             return String.format("%02d:00", hour);
         }
         return time; // Return as-is if format is unexpected

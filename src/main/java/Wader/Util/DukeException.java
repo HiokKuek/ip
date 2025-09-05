@@ -1,4 +1,4 @@
-package Wader.Util;
+package wader.util;
 
 public class DukeException extends Exception {
 

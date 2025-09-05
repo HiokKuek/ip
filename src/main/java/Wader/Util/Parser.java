@@ -1,6 +1,4 @@
-package Wader.Util;
-
-import Wader.Util.DukeException;
+package wader.util;
 
 public class Parser {
 
@@ -28,7 +26,7 @@ public class Parser {
 
     /**
      * Parses user input into a Command object.
-     * 
+     *
      * @param userInput The input string from the user.
      * @return The Command object representing the user's command.
      */
@@ -51,7 +49,6 @@ public class Parser {
             return new Command(CommandType.EVENT, trimmedInput);
         } else if (trimmedInput.startsWith("delete")) {
             return new Command(CommandType.DELETE, trimmedInput);
-
         } else if (trimmedInput.startsWith("find")) {
             return new Command(CommandType.FIND, trimmedInput);
         } else {
@@ -69,8 +66,8 @@ public class Parser {
 
     /**
      * Parses the user input for the index.
-     * 
-     * @param input         The user input string.
+     *
+     * @param input The user input string.
      * @param commandPrefix The command prefix to look for.
      * @return the index
      * @throws DukeException If the command is invalid.
@@ -89,7 +86,7 @@ public class Parser {
 
     /**
      * Parses todo commands for the description
-     * 
+     *
      * @param input The user input command.
      * @return The parsed description.
      * @throws DukeException If the input is invalid.
@@ -104,7 +101,7 @@ public class Parser {
 
     /**
      * Parses the user input for the description and deadline.
-     * 
+     *
      * @param input The user command for deadline task.
      * @return The parsed description and deadline as a array of strings.
      * @throws DukeException If the input is invalid.
@@ -120,7 +117,7 @@ public class Parser {
 
     /**
      * Parses the user input for the description and fromTime and toTime.
-     * 
+     *
      * @param input The user command for event task.
      * @return The parsed description, fromTime, toTime as a array of strings.
      * @throws DukeException If the input is invalid.
@@ -136,7 +133,7 @@ public class Parser {
 
     /**
      * Parses the user input for the index.
-     * 
+     *
      * @param input The user command for delete task.
      * @return The parsed index.
      * @throws DukeException If the input is invalid.

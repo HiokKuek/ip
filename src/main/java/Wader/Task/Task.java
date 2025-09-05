@@ -1,4 +1,4 @@
-package Wader.Task;
+package wader.task;
 
 public class Task {
     private String description;
@@ -11,7 +11,7 @@ public class Task {
 
     /**
      * Gets the description of a Task
-     * 
+     *
      * @return The description of the Task
      */
     public String getDescription() {
@@ -20,7 +20,7 @@ public class Task {
 
     /**
      * Gets the status of a Task
-     * 
+     *
      * @return The status of the Task
      */
 
@@ -43,8 +43,8 @@ public class Task {
     }
 
     /**
-     * Returns a string representation of the Task
-     * e.g. [E][X] event (from: Jan 1 2022 5pm to: Jan 2 2022 6pm)
+     * Returns a string representation of the Task e.g. [E][X] event (from: Jan 1 2022 5pm to: Jan 2
+     * 2022 6pm)
      */
     @Override
     public String toString() {
