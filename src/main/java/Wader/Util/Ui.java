@@ -5,40 +5,53 @@ import java.util.Scanner;
 
 import wader.task.Task;
 
-
 /**
- * Handles all user interface interactions for the Wader application. This class is responsible for
- * displaying messages to the user, reading user input, and formatting output for various operations
+ * Handles all user interface interactions for the Wader application. This class
+ * is responsible for
+ * displaying messages to the user, reading user input, and formatting output
+ * for various operations
  * like task management and error handling.
  */
 public class Ui {
     private Scanner scanner;
 
     /**
-     * Constructs a new Ui object and initializes the Scanner for reading user input.
+     * Constructs a new Ui object and initializes the Scanner for reading user
+     * input.
      */
     public Ui() {
         this.scanner = new Scanner(System.in);
     }
 
     /**
-     * Displays the welcome message when the application starts. Uses the Messages utility class to
+     * Displays the welcome message when the application starts. Uses the Messages
+     * utility class to
      * get the formatted welcome message.
+     *
+     * @return the welcome message that was displayed
      */
-    public void showWelcomeMessage() {
-        System.out.println(Messages.getWelcomeMessage());
+    public String showWelcomeMessage() {
+        String message = Messages.getWelcomeMessage();
+        System.out.println(message);
+        return message;
     }
 
     /**
-     * Displays the goodbye message when the application terminates. Uses the Messages utility class
+     * Displays the goodbye message when the application terminates. Uses the
+     * Messages utility class
      * to get the formatted goodbye message.
+     *
+     * @return the goodbye message that was displayed
      */
-    public void showGoodbyeMessage() {
-        System.out.println(Messages.getGoodbyeMessage());
+    public String showGoodbyeMessage() {
+        String message = Messages.getGoodbyeMessage();
+        System.out.println(message);
+        return message;
     }
 
     /**
-     * Reads a command from the user through standard input. The input is automatically trimmed of
+     * Reads a command from the user through standard input. The input is
+     * automatically trimmed of
      * leading and trailing whitespace.
      *
      * @return the user's input as a trimmed string
@@ -48,7 +61,8 @@ public class Ui {
     }
 
     /**
-     * Closes the Scanner to release system resources. Should be called when the application
+     * Closes the Scanner to release system resources. Should be called when the
+     * application
      * terminates to prevent resource leaks.
      */
     public void close() {
@@ -56,105 +70,135 @@ public class Ui {
     }
 
     /**
-     * Displays an error message to the user. The error message is formatted using the Messages
+     * Displays an error message to the user. The error message is formatted using
+     * the Messages
      * utility class for consistent styling.
      *
      * @param errorMessage the error message to display to the user
+     * @return the formatted error message that was displayed
      */
-    public void showError(String errorMessage) {
-        System.out.println(Messages.printCustomMessage(errorMessage));
+    public String showError(String errorMessage) {
+        String formattedMessage = Messages.printCustomMessage(errorMessage);
+        System.out.println(formattedMessage);
+        return formattedMessage;
     }
 
     /**
-     * Displays a general message to the user. The message is formatted using the Messages utility
+     * Displays a general message to the user. The message is formatted using the
+     * Messages utility
      * class for consistent styling.
      *
      * @param message the message to display to the user
+     * @return the formatted message that was displayed
      */
-    public void showMessage(String message) {
-        System.out.println(Messages.printCustomMessage(message));
+    public String showMessage(String message) {
+        String formattedMessage = Messages.printCustomMessage(message);
+        System.out.println(formattedMessage);
+        return formattedMessage;
     }
 
     /**
-     * Displays the current list of tasks to the user. Each task is numbered starting from 1 and
-     * displayed with its current status. If the task list is empty, displays a message indicating
+     * Displays the current list of tasks to the user. Each task is numbered
+     * starting from 1 and
+     * displayed with its current status. If the task list is empty, displays a
+     * message indicating
      * no tasks are present.
      *
      * @param waderList the WaderList containing tasks to be displayed
+     * @return the formatted task list message that was displayed
      */
-    public void showTaskList(WaderList waderList) {
+    public String showTaskList(WaderList waderList) {
         if (waderList.isEmpty()) {
-            showMessage("No tasks in the list.");
-            return;
+            return showMessage("No tasks in the list.");
         }
         String prnt = waderList.getTasks().stream()
                 .map(t -> String.format("%d.%s", waderList.getTasks().indexOf(t) + 1, t))
                 .reduce((x, y) -> x + "\n" + y).get();
         String message = Messages.printCustomMessage(prnt);
         System.out.print(message);
+        return message;
     }
 
-    public void showTaskList(List<Task> tasks) {
+    /**
+     * Displays the current list of tasks to the user. Each task is numbered
+     * starting from 1 and
+     * displayed with its current status. If the task list is empty, displays a
+     * message indicating
+     * no matching tasks were found.
+     *
+     * @param tasks the list of tasks to be displayed
+     * @return the formatted task list message that was displayed
+     */
+    public String showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            showMessage("No matching tasks found.");
-            return;
+            return showMessage("No matching tasks found.");
         }
         String prnt = tasks.stream().map(t -> String.format("%d.%s", tasks.indexOf(t) + 1, t))
                 .reduce((x, y) -> x + "\n" + y).get();
         String message = Messages.printCustomMessage(prnt);
         System.out.print(message);
+        return message;
     }
 
     /**
-     * Displays a confirmation message when a task has been successfully added. Shows the added task
+     * Displays a confirmation message when a task has been successfully added.
+     * Shows the added task
      * details and the updated total number of tasks in the list.
      *
-     * @param task the Task object that was added to the list
-     * @param waderList the WaderList containing all tasks (used to get the current size)
+     * @param task      the Task object that was added to the list
+     * @param waderList the WaderList containing all tasks (used to get the current
+     *                  size)
+     * @return the formatted confirmation message that was displayed
      */
-    public void showTaskAdded(Task task, WaderList waderList) {
+    public String showTaskAdded(Task task, WaderList waderList) {
         String message = "Got it. I've added this task:\n" + Messages.INDENTATION + task.toString()
                 + "\n" + "Now you have " + waderList.getSize() + " tasks in the list.";
-        showMessage(message);
+        return showMessage(message);
     }
 
     /**
-     * Displays a confirmation message when a task has been marked as done. Shows the task that was
+     * Displays a confirmation message when a task has been marked as done. Shows
+     * the task that was
      * marked with its updated completion status.
      *
      * @param waderList the WaderList containing the task that was marked
-     * @param index the index of the task that was marked as done (0-based)
+     * @param index     the index of the task that was marked as done (0-based)
+     * @return the formatted confirmation message that was displayed
      */
-    public void showTaskMarked(WaderList waderList, int index) {
+    public String showTaskMarked(WaderList waderList, int index) {
         String prntMessage = "Nice! I've marked this task as done:\n" + Messages.INDENTATION
                 + waderList.getTaskString(index);
-        showMessage(prntMessage);
+        return showMessage(prntMessage);
     }
 
     /**
-     * Displays a confirmation message when a task has been unmarked (marked as not done). Shows the
+     * Displays a confirmation message when a task has been unmarked (marked as not
+     * done). Shows the
      * task that was unmarked with its updated completion status.
      *
      * @param waderList the WaderList containing the task that was unmarked
-     * @param index the index of the task that was marked as not done (0-based)
+     * @param index     the index of the task that was marked as not done (0-based)
+     * @return the formatted confirmation message that was displayed
      */
-    public void showTaskUnmarked(WaderList waderList, int index) {
+    public String showTaskUnmarked(WaderList waderList, int index) {
         String prntMessage = "OK, I've marked this task as not done yet:\n" + Messages.INDENTATION
                 + waderList.getTaskString(index);
-        showMessage(prntMessage);
+        return showMessage(prntMessage);
     }
 
     /**
-     * Displays a confirmation message when a task has been successfully deleted. Shows the deleted
+     * Displays a confirmation message when a task has been successfully deleted.
+     * Shows the deleted
      * task details and the updated total number of tasks remaining in the list.
      *
      * @param removedTask the Task object that was removed from the list
-     * @param waderList the WaderList after the task was removed (used to get the current size)
+     * @param waderList   the WaderList after the task was removed (used to get the
+     *                    current size)
+     * @return the formatted confirmation message that was displayed
      */
-    public void showTaskDeleted(Task removedTask, WaderList waderList) {
-        String message =
-                "Noted. I've removed this task:\n" + Messages.INDENTATION + removedTask.toString()
-                        + "\n" + "Now you have " + waderList.getSize() + " tasks in the list.";
-        showMessage(message);
+    public String showTaskDeleted(Task removedTask, WaderList waderList) {
+        String message = "Noted. I've removed this task:\n" + Messages.INDENTATION + removedTask.toString()
+                + "\n" + "Now you have " + waderList.getSize() + " tasks in the list.";
+        return showMessage(message);
     }
 }

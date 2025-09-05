@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * Controller for the main GUI.
@@ -44,10 +45,17 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        // String response = duke.getResponse(input);
-        // dialogContainer.getChildren().addAll(
-        // DialogBox.getUserDialog(input, userImage),
-        // DialogBox.getDukeDialog(response, dukeImage));
+
+        // Close the application if the input is "bye"
+        if (input.trim().startsWith("bye")) {
+            Stage stage = (Stage) sendButton.getScene().getWindow();
+            stage.close();
+        }
+
+        String response = wader.getResponse(input);
+        dialogContainer.getChildren().addAll(
+                DialogBox.getUserDialog(input, userImage),
+                DialogBox.getDukeDialog(response, dukeImage));
         userInput.clear();
     }
 }

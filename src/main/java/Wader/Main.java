@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private Wader wader = new Wader();
+    private Wader wader = new Wader("storage/tasks.txt");
 
     @Override
     public void start(Stage stage) {

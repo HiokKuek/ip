@@ -26,7 +26,57 @@ public class Wader {
         }
     }
 
-    public Wader() {
+    /**
+     * Handles user input and returns the appropriate response.
+     * This method processes the input command and returns the response string
+     * that would be displayed to the user.
+     *
+     * @param userInput the user's input command
+     * @return the response message from processing the command
+     */
+    public String getResponse(String userInput) {
+        try {
+            Parser.Command command = Parser.parse(userInput);
+
+            if (command.getType() == Parser.CommandType.BYE) {
+                return ui.showGoodbyeMessage();
+            } else if (command.getType() == Parser.CommandType.LIST) {
+                return ui.showTaskList(tasks);
+            } else if (command.getType() == Parser.CommandType.MARK) {
+                return handleMarkAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.UNMARK) {
+                return handleUnmarkAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.TODO) {
+                return handleTodoAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.DEADLINE) {
+                return handleDeadlineAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.EVENT) {
+                return handleEventAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.DELETE) {
+                return handleDeleteAndGetResponse(command.getFullCommand(), tasks);
+            } else if (command.getType() == Parser.CommandType.FIND) {
+                return handleFindAndGetResponse(command.getFullCommand(), tasks);
+            } else {
+                throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+            }
+        } catch (DukeException e) {
+            return ui.showError(e.getMessage());
+        } catch (NumberFormatException e) {
+            return ui.showError("Invalid task number format.");
+        } catch (Exception e) {
+            return ui.showError("An unexpected error occurred: " + e.getMessage());
+        } finally {
+            // Save tasks after each command (except for bye)
+            if (!userInput.trim().startsWith("bye")) {
+                try {
+                    storage.save(tasks);
+                } catch (DukeException e) {
+                    // Note: This error message won't be returned since we're in finally block
+                    // But it will still be displayed via ui.showError
+                    ui.showError("Error saving tasks: " + e.getMessage());
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -50,98 +100,70 @@ public class Wader {
         String userInput = "";
 
         while (true) {
-            try {
-                userInput = ui.readCommand();
-                Parser.Command command = Parser.parse(userInput);
+            userInput = ui.readCommand();
 
-                if (command.getType() == Parser.CommandType.BYE) {
-                    return; // Exit the loop
-                } else if (command.getType() == Parser.CommandType.LIST) {
-                    ui.showTaskList(tasks);
-                } else if (command.getType() == Parser.CommandType.MARK) {
-                    handleMark(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.UNMARK) {
-                    handleUnmark(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.TODO) {
-                    handleTodo(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.DEADLINE) {
-                    handleDeadline(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.EVENT) {
-                    handleEvent(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.DELETE) {
-                    handleDelete(command.getFullCommand(), tasks);
-                } else if (command.getType() == Parser.CommandType.FIND) {
-                    handleFind(command.getFullCommand(), tasks);
-                } else {
-                    throw new DukeException(
-                            "OOPS!!! I'm sorry, but I don't know what that means :-(");
-                }
+            // Use handleInput to process the command
+            getResponse(userInput);
 
-                try {
-                    storage.save(tasks);
-                } catch (DukeException e) {
-                    ui.showError("Error saving tasks: " + e.getMessage());
-                }
-
-            } catch (DukeException e) {
-                ui.showError(e.getMessage());
-            } catch (NumberFormatException e) {
-                ui.showError("Invalid task number format.");
+            // Check if it's a bye command to exit
+            if (userInput.trim().startsWith("bye")) {
+                break;
             }
         }
     }
 
-    private void handleFind(String input, WaderList waderList) throws DukeException {
-        String keyword = Parser.parseFindKeyword(input);
-        List<Task> foundTasks = waderList.findTasks(keyword);
-        ui.showTaskList(foundTasks);
-    }
-
-    private void handleMark(String input, WaderList waderList) throws DukeException {
+    // New methods that return response strings for handleInput()
+    private String handleMarkAndGetResponse(String input, WaderList waderList) throws DukeException {
         int index = Parser.parseTaskIndex(input, "mark");
         boolean res = waderList.mark(index);
         if (res) {
-            ui.showTaskMarked(waderList, index);
+            return ui.showTaskMarked(waderList, index);
         } else {
-            ui.showError("Invalid task index.");
+            return ui.showError("Invalid task index.");
         }
     }
 
-    private void handleUnmark(String input, WaderList waderList) throws DukeException {
+    private String handleUnmarkAndGetResponse(String input, WaderList waderList) throws DukeException {
         int index = Parser.parseTaskIndex(input, "unmark");
         boolean res = waderList.unmark(index);
         if (res) {
-            ui.showTaskUnmarked(waderList, index);
+            return ui.showTaskUnmarked(waderList, index);
         } else {
-            ui.showError("Invalid task index.");
+            return ui.showError("Invalid task index.");
         }
     }
 
-    private void handleTodo(String input, WaderList waderList) throws DukeException {
+    private String handleTodoAndGetResponse(String input, WaderList waderList) throws DukeException {
         String desc = Parser.parseTodoDescription(input);
         Task task = waderList.addToDoTask(desc);
-        ui.showTaskAdded(task, waderList);
+        return ui.showTaskAdded(task, waderList);
     }
 
-    private void handleDeadline(String input, WaderList waderList) throws DukeException {
+    private String handleDeadlineAndGetResponse(String input, WaderList waderList) throws DukeException {
         String[] parts = Parser.parseDeadlineCommand(input);
         Task task = waderList.addDeadlineTask(parts[0], parts[1]);
-        ui.showTaskAdded(task, waderList);
+        return ui.showTaskAdded(task, waderList);
     }
 
-    private void handleEvent(String input, WaderList waderList) throws DukeException {
+    private String handleEventAndGetResponse(String input, WaderList waderList) throws DukeException {
         String[] parts = Parser.parseEventCommand(input);
         Task task = waderList.addEventTask(parts[0], parts[1], parts[2]);
-        ui.showTaskAdded(task, waderList);
+        return ui.showTaskAdded(task, waderList);
     }
 
-    private void handleDelete(String input, WaderList waderList) throws DukeException {
+    private String handleDeleteAndGetResponse(String input, WaderList waderList) throws DukeException {
         try {
             int index = Parser.parseDeleteIndex(input);
             Task removedTask = waderList.delete(index);
-            ui.showTaskDeleted(removedTask, waderList);
+            return ui.showTaskDeleted(removedTask, waderList);
         } catch (IndexOutOfBoundsException e) {
-            ui.showError("Invalid task index");
+            return ui.showError("Invalid task index");
         }
+    }
+
+    private String handleFindAndGetResponse(String input, WaderList waderList) throws DukeException {
+        String keyword = Parser.parseFindKeyword(input);
+        List<Task> foundTasks = waderList.findTasks(keyword);
+        return ui.showTaskList(foundTasks);
     }
 }
