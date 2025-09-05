@@ -39,6 +39,7 @@ public class Wader {
             Parser.Command command = Parser.parse(userInput);
 
             if (command.getType() == Parser.CommandType.BYE) {
+                storage.save(tasks);
                 return ui.showGoodbyeMessage();
             } else if (command.getType() == Parser.CommandType.LIST) {
                 return ui.showTaskList(tasks);
@@ -65,22 +66,11 @@ public class Wader {
             return ui.showError("Invalid task number format.");
         } catch (Exception e) {
             return ui.showError("An unexpected error occurred: " + e.getMessage());
-        } finally {
-            // Save tasks after each command (except for bye)
-            if (!userInput.trim().startsWith("bye")) {
-                try {
-                    storage.save(tasks);
-                } catch (DukeException e) {
-                    // Note: This error message won't be returned since we're in finally block
-                    // But it will still be displayed via ui.showError
-                    ui.showError("Error saving tasks: " + e.getMessage());
-                }
-            }
         }
     }
 
     public static void main(String[] args) {
-        new Wader("Wader.txt").serve();
+        new Wader("storage/tasks.txt").serve();
     }
 
     private void serve() {

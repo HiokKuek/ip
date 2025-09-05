@@ -46,16 +46,16 @@ public class MainWindow extends AnchorPane {
     private void handleUserInput() {
         String input = userInput.getText();
 
-        // Close the application if the input is "bye"
-        if (input.trim().startsWith("bye")) {
-            Stage stage = (Stage) sendButton.getScene().getWindow();
-            stage.close();
-        }
-
         String response = wader.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
                 DialogBox.getDukeDialog(response, dukeImage));
         userInput.clear();
+
+        // Close the application if the input is "bye"
+        if (input.trim().startsWith("bye")) {
+            Stage stage = (Stage) sendButton.getScene().getWindow();
+            stage.close();
+        }
     }
 }
