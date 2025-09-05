@@ -26,6 +26,9 @@ public class Wader {
         }
     }
 
+    public Wader() {
+    }
+
     public static void main(String[] args) {
         new Wader("Wader.txt").serve();
     }
