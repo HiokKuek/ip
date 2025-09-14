@@ -2,10 +2,9 @@ package wader.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-
-
 
 public class ParserTest {
 
@@ -244,5 +243,154 @@ public class ParserTest {
     public void parseDeleteIndex_negativeNumber_returnsNegativeIndex() throws DukeException {
         int index = Parser.parseDeleteIndex("delete -5");
         assertEquals(-6, index); // -5 - 1 = -6
+    }
+
+    // Additional edge case tests for Parser
+    @Test
+    public void parseEventCommand_overlappingFromTo_stillParsesSuccessfully() throws DukeException {
+        // Test when 'from' time might be after 'to' time (business logic allows this)
+        String[] parts = Parser.parseEventCommand("event meeting /from 2025-08-30 18:00 /to 2025-08-30 14:00");
+        assertEquals(3, parts.length);
+        assertEquals("meeting", parts[0]);
+        assertEquals("2025-08-30 18:00", parts[1]);
+        assertEquals("2025-08-30 14:00", parts[2]);
+    }
+
+    @Test
+    public void parseDeadlineCommand_pastDate_stillAccepted() throws DukeException {
+        // Test that past dates are accepted (business logic decision)
+        String[] parts = Parser.parseDeadlineCommand("deadline old task /by 2020-01-01 12:00");
+        assertEquals(2, parts.length);
+        assertEquals("old task", parts[0]);
+        assertEquals("2020-01-01 12:00", parts[1]);
+    }
+
+    @Test
+    public void parseEventCommand_emptyDescription_throwsDukeException() {
+        // When description is empty before /from
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseEventCommand("event /from 2025-08-30 14:00 /to 2025-08-30 16:00");
+        });
+        assertEquals("OOPS!!! Invalid event format.", exception.getMessage());
+    }
+
+    @Test
+    public void parseDeadlineCommand_emptyDeadlineTime_throwsDukeException() {
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseDeadlineCommand("deadline submit report /by ");
+        });
+        assertEquals("OOPS!!! Invalid deadline format.", exception.getMessage());
+    }
+
+    @Test
+    public void parseEventCommand_emptyFromTime_throwsDukeException() {
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseEventCommand("event meeting /from  /to 2025-08-30 16:00");
+        });
+        assertEquals("OOPS!!! Invalid event format.", exception.getMessage());
+    }
+
+    @Test
+    public void parseEventCommand_emptyToTime_throwsDukeException() {
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseEventCommand("event meeting /from 2025-08-30 14:00 /to ");
+        });
+        assertEquals("OOPS!!! Invalid event format.", exception.getMessage());
+    }
+
+    @Test
+    public void parseTaskIndex_zeroIndex_returnsNegativeOne() throws DukeException {
+        int index = Parser.parseTaskIndex("mark 0", "mark");
+        assertEquals(-1, index); // 0 - 1 = -1
+    }
+
+    @Test
+    public void parseTaskIndex_largeNumber_returnsCorrectIndex() throws DukeException {
+        int index = Parser.parseTaskIndex("mark 1000", "mark");
+        assertEquals(999, index); // 1000 - 1 = 999
+    }
+
+    @Test
+    public void parseTodoDescription_veryLongDescription_handlesCorrectly() throws DukeException {
+        String longDesc = "a".repeat(1000); // 1000 character description
+        String description = Parser.parseTodoDescription("todo " + longDesc);
+        assertEquals(longDesc, description);
+    }
+
+    @Test
+    public void parseDeadlineCommand_multipleSpacesInDescription_handlesCorrectly() throws DukeException {
+        String[] parts = Parser
+                .parseDeadlineCommand("deadline   submit    report   with   spaces /by 2025-08-30 18:00");
+        assertEquals(2, parts.length);
+        assertEquals("submit    report   with   spaces", parts[0]);
+        assertEquals("2025-08-30 18:00", parts[1]);
+    }
+
+    @Test
+    public void parseEventCommand_multipleSpacesInDescription_handlesCorrectly() throws DukeException {
+        String[] parts = Parser
+                .parseEventCommand("event   team    meeting   discussion /from 2025-08-30 14:00 /to 2025-08-30 16:00");
+        assertEquals(3, parts.length);
+        assertEquals("team    meeting   discussion", parts[0]);
+        assertEquals("2025-08-30 14:00", parts[1]);
+        assertEquals("2025-08-30 16:00", parts[2]);
+    }
+
+    @Test
+    public void parse_commandWithTabsAndNewlines_handlesCorrectly() {
+        Parser.Command command = Parser.parse("todo\tread\nbook");
+        assertEquals(Parser.CommandType.TODO, command.getType());
+        assertEquals("todo\tread\nbook", command.getFullCommand());
+    }
+
+    @Test
+    public void parseTaskIndex_withExtraSpaces_handlesCorrectly() throws DukeException {
+        int index = Parser.parseTaskIndex("mark   5   ", "mark");
+        assertEquals(4, index); // 5 - 1 = 4
+    }
+
+    @Test
+    public void parseDeleteIndex_withExtraSpaces_handlesCorrectly() throws DukeException {
+        int index = Parser.parseDeleteIndex("delete   3   ");
+        assertEquals(2, index); // 3 - 1 = 2
+    }
+
+    // Test parseFindKeyword() method
+    @Test
+    public void parseFindKeyword_validKeyword_returnsKeyword() throws DukeException {
+        String keyword = Parser.parseFindKeyword("find book");
+        assertEquals("book", keyword);
+    }
+
+    @Test
+    public void parseFindKeyword_emptyKeyword_throwsDukeException() {
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseFindKeyword("find");
+        });
+        assertTrue(exception.getMessage().contains("Please provide a keyword"));
+    }
+
+    @Test
+    public void parseFindKeyword_multipleWords_throwsDukeException() {
+        // The current implementation only accepts single word keywords
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseFindKeyword("find read book chapters");
+        });
+        assertTrue(exception.getMessage().contains("Please provide a keyword"));
+    }
+
+    @Test
+    public void parseFindKeyword_withExtraSpaces_throwsDukeException() {
+        // Multiple spaces create more than 2 parts when split
+        DukeException exception = assertThrows(DukeException.class, () -> {
+            Parser.parseFindKeyword("find   important");
+        });
+        assertTrue(exception.getMessage().contains("Please provide a keyword"));
+    }
+
+    @Test
+    public void parseFindKeyword_singleSpecialCharacter_handlesCorrectly() throws DukeException {
+        String keyword = Parser.parseFindKeyword("find @important");
+        assertEquals("@important", keyword);
     }
 }

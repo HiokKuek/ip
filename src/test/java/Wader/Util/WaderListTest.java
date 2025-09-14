@@ -13,7 +13,6 @@ import wader.task.EventTask;
 import wader.task.Task;
 import wader.task.ToDoTask;
 
-
 public class WaderListTest {
 
     private WaderList waderList;
@@ -402,5 +401,276 @@ public class WaderListTest {
         // Unmark a task
         assertTrue(waderList.unmark(0));
         assertFalse(waderList.getTasks().get(0).isDone());
+    }
+
+    // Test findTasks() method
+    @Test
+    public void findTasks_emptyKeyword_returnsAllTasks() throws DukeException {
+        waderList.addToDoTask("buy milk");
+        waderList.addToDoTask("read book");
+        waderList.addDeadlineTask("submit assignment", "2025-08-30 18:00");
+
+        var foundTasks = waderList.findTasks("");
+
+        assertEquals(3, foundTasks.size()); // Empty keyword should return all tasks
+    }
+
+    @Test
+    public void findTasks_validKeyword_returnsMatchingTasks() throws DukeException {
+        waderList.addToDoTask("buy milk");
+        waderList.addToDoTask("read book");
+        waderList.addToDoTask("buy groceries");
+        waderList.addDeadlineTask("submit assignment", "2025-08-30 18:00");
+
+        var foundTasks = waderList.findTasks("buy");
+
+        assertEquals(2, foundTasks.size());
+        assertEquals("buy milk", foundTasks.get(0).getDescription());
+        assertEquals("buy groceries", foundTasks.get(1).getDescription());
+    }
+
+    @Test
+    public void findTasks_noMatches_returnsEmptyList() throws DukeException {
+        waderList.addToDoTask("buy milk");
+        waderList.addToDoTask("read book");
+
+        var foundTasks = waderList.findTasks("xyz");
+
+        assertTrue(foundTasks.isEmpty());
+    }
+
+    @Test
+    public void findTasks_caseSensitive_matchesExactCase() throws DukeException {
+        waderList.addToDoTask("Buy Milk");
+        waderList.addToDoTask("buy milk");
+
+        var foundTasks = waderList.findTasks("Buy");
+
+        assertEquals(1, foundTasks.size());
+        assertEquals("Buy Milk", foundTasks.get(0).getDescription());
+    }
+
+    @Test
+    public void findTasks_partialMatch_returnsMatches() throws DukeException {
+        waderList.addToDoTask("assignment submission");
+        waderList.addToDoTask("submit report");
+        waderList.addToDoTask("read submission guidelines");
+
+        var foundTasks = waderList.findTasks("submit");
+
+        assertEquals(1, foundTasks.size());
+        assertEquals("assignment submission", foundTasks.get(0).getDescription());
+        assertEquals("submit report", foundTasks.get(1).getDescription());
+    }
+
+    // Test getNextUpcomingTasks() method
+    @Test
+    public void getNextUpcomingTasks_allTasksPast_returnsEmpty() throws DukeException {
+        // Add tasks with past dates
+        waderList.addDeadlineTask("old deadline", "2020-01-01 12:00");
+        waderList.addEventTask("old event", "2020-01-01 10:00", "2020-01-01 11:00");
+
+        var upcomingTasks = waderList.getNextUpcomingTasks(3);
+
+        assertTrue(upcomingTasks.isEmpty());
+    }
+
+    @Test
+    public void getNextUpcomingTasks_moreThanRequested_returnsLimitedResults() throws DukeException {
+        // Add tasks with future dates
+        waderList.addDeadlineTask("deadline 1", "2025-12-01 12:00");
+        waderList.addDeadlineTask("deadline 2", "2025-12-02 12:00");
+        waderList.addDeadlineTask("deadline 3", "2025-12-03 12:00");
+        waderList.addDeadlineTask("deadline 4", "2025-12-04 12:00");
+        waderList.addEventTask("event 1", "2025-12-05 10:00", "2025-12-05 11:00");
+
+        var upcomingTasks = waderList.getNextUpcomingTasks(3);
+
+        assertEquals(3, upcomingTasks.size()); // Should limit to 3 even though we have 5
+    }
+
+    @Test
+    public void getNextUpcomingTasks_mixedTaskTypes_returnsOnlyDatedTasks() throws DukeException {
+        waderList.addToDoTask("todo without date");
+        waderList.addDeadlineTask("future deadline", "2025-12-01 12:00");
+        waderList.addToDoTask("another todo");
+        waderList.addEventTask("future event", "2025-12-02 10:00", "2025-12-02 11:00");
+
+        var upcomingTasks = waderList.getNextUpcomingTasks(5);
+
+        assertEquals(2, upcomingTasks.size()); // Only deadline and event should be returned
+        // Should be sorted by date
+        assertTrue(upcomingTasks.get(0).hasDate());
+        assertTrue(upcomingTasks.get(1).hasDate());
+    }
+
+    @Test
+    public void getNextUpcomingTasks_sortedByDate_returnsInOrder() throws DukeException {
+        // Add tasks in random order
+        waderList.addDeadlineTask("later deadline", "2025-12-03 12:00");
+        waderList.addDeadlineTask("earlier deadline", "2025-12-01 12:00");
+        waderList.addEventTask("middle event", "2025-12-02 10:00", "2025-12-02 11:00");
+
+        var upcomingTasks = waderList.getNextUpcomingTasks(3);
+
+        assertEquals(3, upcomingTasks.size());
+        // Should be sorted by date (earliest first)
+        assertEquals("earlier deadline", upcomingTasks.get(0).getDescription());
+        assertEquals("middle event", upcomingTasks.get(1).getDescription());
+        assertEquals("later deadline", upcomingTasks.get(2).getDescription());
+    }
+
+    @Test
+    public void getNextUpcomingTasks_emptyList_returnsEmpty() {
+        var upcomingTasks = waderList.getNextUpcomingTasks(3);
+
+        assertTrue(upcomingTasks.isEmpty());
+    }
+
+    @Test
+    public void getNextUpcomingTasks_zeroCount_returnsEmpty() throws DukeException {
+        waderList.addDeadlineTask("future deadline", "2025-12-01 12:00");
+
+        var upcomingTasks = waderList.getNextUpcomingTasks(0);
+
+        assertTrue(upcomingTasks.isEmpty());
+    }
+
+    // Boundary condition tests
+    @Test
+    public void addDeadlineTask_variousInvalidDateFormats_throwsDukeException() {
+        // Test various invalid date formats
+        assertThrows(DukeException.class, () -> {
+            waderList.addDeadlineTask("task", "invalid-date-format");
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addDeadlineTask("task", "2025-13-01 12:00"); // Invalid month
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addDeadlineTask("task", "2025-02-30 12:00"); // Invalid day
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addDeadlineTask("task", "2025-08-30 25:00"); // Invalid hour
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addDeadlineTask("task", "2025-08-30 12:60"); // Invalid minute
+        });
+    }
+
+    @Test
+    public void addEventTask_invalidTimeFormat_throwsDukeException() {
+        // Test various invalid time formats
+        assertThrows(DukeException.class, () -> {
+            waderList.addEventTask("event", "invalid-from", "2025-08-30 16:00");
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addEventTask("event", "2025-08-30 14:00", "invalid-to");
+        });
+
+        assertThrows(DukeException.class, () -> {
+            waderList.addEventTask("event", "2025-08-30 25:00", "2025-08-30 16:00"); // Invalid hour
+        });
+    }
+
+    // Stress tests
+    @Test
+    public void addTasks_largeNumber_handlesCorrectly() throws DukeException {
+        // Add a large number of tasks to test performance and memory
+        for (int i = 0; i < 1000; i++) {
+            waderList.addToDoTask("task " + i);
+        }
+
+        assertEquals(1000, waderList.getSize());
+        assertEquals("task 0", waderList.getTasks().get(0).getDescription());
+        assertEquals("task 999", waderList.getTasks().get(999).getDescription());
+    }
+
+    @Test
+    public void findTasks_largeList_performsEfficiently() throws DukeException {
+        // Add many tasks and test search performance
+        for (int i = 0; i < 100; i++) {
+            waderList.addToDoTask("task " + i);
+            waderList.addToDoTask("special task " + i);
+        }
+
+        var foundTasks = waderList.findTasks("special");
+
+        assertEquals(100, foundTasks.size());
+        for (int i = 0; i < 100; i++) {
+            assertTrue(foundTasks.get(i).getDescription().contains("special"));
+        }
+    }
+
+    // Edge cases for task operations
+    @Test
+    public void addToDoTask_veryLongDescription_handlesCorrectly() {
+        String longDescription = "a".repeat(10000); // Very long description
+        var task = waderList.addToDoTask(longDescription);
+
+        assertEquals(longDescription, task.getDescription());
+        assertEquals(1, waderList.getSize());
+    }
+
+    @Test
+    public void addToDoTask_specialCharacters_handlesCorrectly() {
+        String specialDesc = "Task with special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?";
+        var task = waderList.addToDoTask(specialDesc);
+
+        assertEquals(specialDesc, task.getDescription());
+        assertEquals(1, waderList.getSize());
+    }
+
+    // Additional integration tests
+    @Test
+    public void waderList_concurrentMarkUnmark_maintainsConsistency() throws DukeException {
+        waderList.addToDoTask("task 1");
+        waderList.addToDoTask("task 2");
+        waderList.addToDoTask("task 3");
+
+        // Test multiple mark/unmark operations
+        assertTrue(waderList.mark(0));
+        assertTrue(waderList.mark(1));
+        assertTrue(waderList.mark(2));
+
+        // All should be marked
+        assertTrue(waderList.getTasks().get(0).isDone());
+        assertTrue(waderList.getTasks().get(1).isDone());
+        assertTrue(waderList.getTasks().get(2).isDone());
+
+        // Unmark some
+        assertTrue(waderList.unmark(1));
+
+        // Check final state
+        assertTrue(waderList.getTasks().get(0).isDone());
+        assertFalse(waderList.getTasks().get(1).isDone());
+        assertTrue(waderList.getTasks().get(2).isDone());
+    }
+
+    @Test
+    public void waderList_addDeleteMarkCycle_worksCorrectly() throws DukeException {
+        // Test complex workflow
+        waderList.addToDoTask("task 1");
+        waderList.addDeadlineTask("task 2", "2025-08-30 18:00");
+        waderList.addEventTask("task 3", "2025-08-30 14:00", "2025-08-30 16:00");
+
+        // Mark and delete operations
+        waderList.mark(1);
+        var deletedTask = waderList.delete(0); // Delete first task
+        assertEquals("task 1", deletedTask.getDescription());
+
+        // After deletion, indices shift
+        assertEquals(2, waderList.getSize());
+        assertTrue(waderList.getTasks().get(0).isDone()); // What was task 2 is now at index 0
+        assertEquals("task 2", waderList.getTasks().get(0).getDescription());
+
+        // Add more tasks after deletion
+        waderList.addToDoTask("task 4");
+        assertEquals(3, waderList.getSize());
+        assertEquals("task 4", waderList.getTasks().get(2).getDescription());
     }
 }
