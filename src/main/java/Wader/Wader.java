@@ -41,27 +41,28 @@ public class Wader {
             Parser.Command command = Parser.parse(userInput);
             assert command != null : "Parsed command must not be null";
 
-            if (command.getType() == Parser.CommandType.BYE) {
-                storage.save(tasks);
-                return ui.showGoodbyeMessage();
-            } else if (command.getType() == Parser.CommandType.LIST) {
-                return ui.showTaskList(tasks);
-            } else if (command.getType() == Parser.CommandType.MARK) {
-                return handleMarkAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.UNMARK) {
-                return handleUnmarkAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.TODO) {
-                return handleTodoAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.DEADLINE) {
-                return handleDeadlineAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.EVENT) {
-                return handleEventAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.DELETE) {
-                return handleDeleteAndGetResponse(command.getFullCommand(), tasks);
-            } else if (command.getType() == Parser.CommandType.FIND) {
-                return handleFindAndGetResponse(command.getFullCommand(), tasks);
-            } else {
-                throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+            switch (command.getType()) {
+                case BYE:
+                    storage.save(tasks);
+                    return ui.showGoodbyeMessage();
+                case LIST:
+                    return ui.showTaskList(tasks);
+                case MARK:
+                    return handleMarkAndGetResponse(command.getFullCommand(), tasks);
+                case UNMARK:
+                    return handleUnmarkAndGetResponse(command.getFullCommand(), tasks);
+                case TODO:
+                    return handleTodoAndGetResponse(command.getFullCommand(), tasks);
+                case DEADLINE:
+                    return handleDeadlineAndGetResponse(command.getFullCommand(), tasks);
+                case EVENT:
+                    return handleEventAndGetResponse(command.getFullCommand(), tasks);
+                case DELETE:
+                    return handleDeleteAndGetResponse(command.getFullCommand(), tasks);
+                case FIND:
+                    return handleFindAndGetResponse(command.getFullCommand(), tasks);
+                default:
+                    throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
         } catch (DukeException e) {
             return ui.showError(e.getMessage());
