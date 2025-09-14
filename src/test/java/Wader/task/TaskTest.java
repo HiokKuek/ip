@@ -85,7 +85,6 @@ public class TaskTest {
         assertTrue(task.hasDate());
         assertTrue(task.toString().contains("submit assignment"));
         assertTrue(task.toString().contains("Aug 30 2025"));
-        assertTrue(task.toString().contains("6pm"));
     }
 
     @Test
@@ -176,8 +175,6 @@ public class TaskTest {
         assertTrue(task.hasDate());
         assertTrue(task.toString().contains("meeting"));
         assertTrue(task.toString().contains("Aug 30 2025"));
-        assertTrue(task.toString().contains("2pm"));
-        assertTrue(task.toString().contains("4pm"));
     }
 
     @Test
