@@ -16,6 +16,7 @@ public class Wader {
     private Storage storage;
 
     public Wader(String filePath) {
+        assert filePath != null && !filePath.isEmpty() : "File path must not be null or empty";
         ui = new Ui();
         storage = new Storage(filePath);
         try {
@@ -35,8 +36,10 @@ public class Wader {
      * @return the response message from processing the command
      */
     public String getResponse(String userInput) {
+        assert userInput != null && !userInput.isEmpty() : "User input must not be null or empty";
         try {
             Parser.Command command = Parser.parse(userInput);
+            assert command != null : "Parsed command must not be null";
 
             if (command.getType() == Parser.CommandType.BYE) {
                 storage.save(tasks);
@@ -105,6 +108,7 @@ public class Wader {
     // New methods that return response strings for handleInput()
     private String handleMarkAndGetResponse(String input, WaderList waderList) throws DukeException {
         int index = Parser.parseTaskIndex(input, "mark");
+        assert index >= 0 : "Task index must be non-negative";
         boolean res = waderList.mark(index);
         if (res) {
             return ui.showTaskMarked(waderList, index);
@@ -115,6 +119,7 @@ public class Wader {
 
     private String handleUnmarkAndGetResponse(String input, WaderList waderList) throws DukeException {
         int index = Parser.parseTaskIndex(input, "unmark");
+        assert index >= 0 : "Task index must be non-negative";
         boolean res = waderList.unmark(index);
         if (res) {
             return ui.showTaskUnmarked(waderList, index);
@@ -125,25 +130,29 @@ public class Wader {
 
     private String handleTodoAndGetResponse(String input, WaderList waderList) throws DukeException {
         String desc = Parser.parseTodoDescription(input);
+        assert desc != null && !desc.isEmpty() : "Task description must not be null or empty";
         Task task = waderList.addToDoTask(desc);
         return ui.showTaskAdded(task, waderList);
     }
 
     private String handleDeadlineAndGetResponse(String input, WaderList waderList) throws DukeException {
         String[] parts = Parser.parseDeadlineCommand(input);
+        assert parts.length == 2 : "Deadline command must have exactly two parts";
         Task task = waderList.addDeadlineTask(parts[0], parts[1]);
         return ui.showTaskAdded(task, waderList);
     }
 
     private String handleEventAndGetResponse(String input, WaderList waderList) throws DukeException {
         String[] parts = Parser.parseEventCommand(input);
+        assert parts.length == 3 : "Event command must have exactly three parts";
         Task task = waderList.addEventTask(parts[0], parts[1], parts[2]);
         return ui.showTaskAdded(task, waderList);
     }
 
     private String handleDeleteAndGetResponse(String input, WaderList waderList) throws DukeException {
+        int index = Parser.parseDeleteIndex(input);
+        assert index >= 0 : "Task index must be non-negative";
         try {
-            int index = Parser.parseDeleteIndex(input);
             Task removedTask = waderList.delete(index);
             return ui.showTaskDeleted(removedTask, waderList);
         } catch (IndexOutOfBoundsException e) {
@@ -153,6 +162,7 @@ public class Wader {
 
     private String handleFindAndGetResponse(String input, WaderList waderList) throws DukeException {
         String keyword = Parser.parseFindKeyword(input);
+        assert keyword != null && !keyword.isEmpty() : "Find keyword must not be null or empty";
         List<Task> foundTasks = waderList.findTasks(keyword);
         return ui.showTaskList(foundTasks);
     }
