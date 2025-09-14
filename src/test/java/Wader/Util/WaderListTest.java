@@ -456,11 +456,11 @@ public class WaderListTest {
         waderList.addToDoTask("submit report");
         waderList.addToDoTask("read submission guidelines");
 
-        var foundTasks = waderList.findTasks("submit");
+        var foundTasks = waderList.findTasks("submission");
 
-        assertEquals(1, foundTasks.size());
+        assertEquals(2, foundTasks.size());
         assertEquals("assignment submission", foundTasks.get(0).getDescription());
-        assertEquals("submit report", foundTasks.get(1).getDescription());
+        assertEquals("read submission guidelines", foundTasks.get(1).getDescription());
     }
 
     // Test getNextUpcomingTasks() method
