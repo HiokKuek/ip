@@ -201,4 +201,26 @@ public class Ui {
                 + "\n" + "Now you have " + waderList.getSize() + " tasks in the list.";
         return showMessage(message);
     }
+
+    /**
+     * Displays the next upcoming tasks to the user.
+     * Shows up to the requested number of tasks that have dates and are upcoming.
+     *
+     * @param tasks the list of upcoming tasks to display
+     * @return the formatted message showing the upcoming tasks
+     */
+    public String showNextUpcomingTasks(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return showMessage("There are no upcoming tasks.");
+        }
+
+        StringBuilder sb = new StringBuilder("Here are your next upcoming tasks:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append(Messages.INDENTATION).append(String.format("%d. %s", i + 1, tasks.get(i).toString()));
+            if (i < tasks.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        return showMessage(sb.toString());
+    }
 }

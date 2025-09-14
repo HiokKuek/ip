@@ -1,6 +1,7 @@
 package wader.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -61,6 +62,28 @@ public class EventTask extends Task {
     public String toString() {
         return String.format("[E]%s (from: %s to: %s)", super.toString(),
                 getFromDate() + " " + getFromTime(), getToDate() + " " + getToTime());
+    }
+
+    /**
+     * Checks if this event task has a date.
+     * Always returns true for event tasks.
+     *
+     * @return true
+     */
+    @Override
+    public boolean hasDate() {
+        return true;
+    }
+
+    /**
+     * Gets the LocalDateTime of this event task.
+     * Returns the start date/time of the event.
+     *
+     * @return the LocalDateTime of when the event starts
+     */
+    @Override
+    public java.time.LocalDateTime getDateTime() {
+        return java.time.LocalDateTime.of(fromDate, fromTime);
     }
 
 }

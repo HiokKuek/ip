@@ -61,6 +61,8 @@ public class Wader {
                     return handleDeleteAndGetResponse(command.getFullCommand(), tasks);
                 case FIND:
                     return handleFindAndGetResponse(command.getFullCommand(), tasks);
+                case REMIND:
+                    return handleRemindAndGetResponse(tasks);
                 default:
                     throw new DukeException("OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
@@ -166,5 +168,10 @@ public class Wader {
         assert keyword != null && !keyword.isEmpty() : "Find keyword must not be null or empty";
         List<Task> foundTasks = waderList.findTasks(keyword);
         return ui.showTaskList(foundTasks);
+    }
+
+    private String handleRemindAndGetResponse(WaderList waderList) {
+        List<Task> nextTasks = waderList.getNextUpcomingTasks(3); // Get the next 3 tasks
+        return ui.showNextUpcomingTasks(nextTasks);
     }
 }

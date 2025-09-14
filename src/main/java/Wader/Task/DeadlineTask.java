@@ -1,6 +1,7 @@
 package wader.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -36,6 +37,27 @@ public class DeadlineTask extends Task {
     @Override
     public String toString() {
         return String.format("[D]%s (by: %s)", super.toString(), getDate() + " " + getTime());
+    }
+
+    /**
+     * Checks if this deadline task has a date.
+     * Always returns true for deadline tasks.
+     *
+     * @return true
+     */
+    @Override
+    public boolean hasDate() {
+        return true;
+    }
+
+    /**
+     * Gets the LocalDateTime of this deadline task.
+     *
+     * @return the LocalDateTime combining the date and time of the deadline
+     */
+    @Override
+    public java.time.LocalDateTime getDateTime() {
+        return java.time.LocalDateTime.of(date, time);
     }
 
 }

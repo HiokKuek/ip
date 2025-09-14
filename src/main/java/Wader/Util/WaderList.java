@@ -1,8 +1,10 @@
 package wader.util;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import wader.task.DeadlineTask;
 import wader.task.EventTask;
@@ -103,5 +105,22 @@ public class WaderList {
 
     public boolean isEmpty() {
         return items.isEmpty();
+    }
+
+    /**
+     * Gets the next upcoming tasks with dates, sorted by their date/time.
+     * Only returns tasks that have dates (deadline and event tasks).
+     *
+     * @param count the maximum number of upcoming tasks to return
+     * @return a list of the next upcoming tasks, up to the specified count
+     */
+    public List<Task> getNextUpcomingTasks(int count) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        return items.stream()
+                .filter(Task::hasDate) // Only consider tasks with dates
+                .filter(task -> task.getDateTime().isAfter(now)) // Only future tasks
+                .sorted((t1, t2) -> t1.getDateTime().compareTo(t2.getDateTime())) // Sort by date
+                .limit(count) // Get the first 'count' tasks
+                .collect(java.util.stream.Collectors.toList());
     }
 }

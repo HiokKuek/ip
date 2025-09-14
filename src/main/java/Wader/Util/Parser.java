@@ -3,7 +3,7 @@ package wader.util;
 public class Parser {
 
     public enum CommandType {
-        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, FIND, UNKNOWN
+        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, FIND, REMIND, UNKNOWN
     }
 
     public static class Command {
@@ -51,6 +51,8 @@ public class Parser {
             return new Command(CommandType.DELETE, trimmedInput);
         } else if (trimmedInput.startsWith("find")) {
             return new Command(CommandType.FIND, trimmedInput);
+        } else if (trimmedInput.startsWith("remind")) {
+            return new Command(CommandType.REMIND, trimmedInput);
         } else {
             return new Command(CommandType.UNKNOWN, trimmedInput);
         }
@@ -67,7 +69,7 @@ public class Parser {
     /**
      * Parses the user input for the index.
      *
-     * @param input The user input string.
+     * @param input         The user input string.
      * @param commandPrefix The command prefix to look for.
      * @return the index
      * @throws DukeException If the command is invalid.
